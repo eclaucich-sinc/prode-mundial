@@ -24,7 +24,7 @@ const PartidoAdminCard = ({ partido, token }) => {
     setEstadoCarga('⏳ Calculando...');
 
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/resultado/${partido._id}`, {
+      const res = await fetch(`https://prode-mundial-t3nt.onrender.com/api/admin/resultado/${partido._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +156,7 @@ export default function Admin() {
 
     const cargarPartidos = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/partidos');
+        const res = await fetch('https://prode-mundial-t3nt.onrender.com/api/partidos');
         const data = await res.json();
         setPartidos(data);
       } catch (error) {
@@ -189,7 +189,7 @@ export default function Admin() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/partidos', {
+      const res = await fetch('https://prode-mundial-t3nt.onrender.com/api/partidos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

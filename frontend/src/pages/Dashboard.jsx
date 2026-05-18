@@ -22,7 +22,7 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
   const guardarPrediccion = async () => {
     setEstadoGuardado('⏳...');
     try {
-      const res = await fetch('http://localhost:5000/api/predicciones', {
+      const res = await fetch('https://prode-mundial-t3nt.onrender.com/api/predicciones', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,10 +49,10 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
 
   // Estilos comunes para los contenedores de marcadores
   const contenedorMarcadorStyle = {
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    gap: '15px', 
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '15px',
     padding: '10px',
     borderRadius: '5px',
     backgroundColor: '#fff'
@@ -74,7 +74,7 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
   return (
     <div style={{ border: '1px solid #ddd', borderRadius: '8px', marginBottom: '15px', backgroundColor: finalizado ? '#f1f3f5' : '#f9f9f9', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
       {/* Cabecera Clickable (Vista colapsada) */}
-      <div 
+      <div
         onClick={() => setExpandido(!expandido)}
         style={{ padding: '15px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
@@ -110,34 +110,34 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
                 {/* Bloque Tu Predicción */}
                 <div style={{ textAlign: 'center', flex: 1, border: '1px dashed #ccc', padding: '10px', borderRadius: '5px' }}>
                   <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>Tu Predicción</div>
-                  <div style={{...contenedorMarcadorStyle, backgroundColor: 'transparent', gap: '8px'}}>
-                    <span style={{fontSize: '14px'}}>{partido.equipo_local}</span>
-                    <span style={{...circuloGolesStyle, backgroundColor: '#6c757d', fontSize: '16px', width: '30px', height: '30px'}}>
+                  <div style={{ ...contenedorMarcadorStyle, backgroundColor: 'transparent', gap: '8px' }}>
+                    <span style={{ fontSize: '14px' }}>{partido.equipo_local}</span>
+                    <span style={{ ...circuloGolesStyle, backgroundColor: '#6c757d', fontSize: '16px', width: '30px', height: '30px' }}>
                       {prediccionPrevia ? prediccionPrevia.prediccion_goles_local : '-'}
                     </span>
-                    <span style={{fontWeight: 'bold'}}>-</span>
-                    <span style={{...circuloGolesStyle, backgroundColor: '#6c757d', fontSize: '16px', width: '30px', height: '30px'}}>
+                    <span style={{ fontWeight: 'bold' }}>-</span>
+                    <span style={{ ...circuloGolesStyle, backgroundColor: '#6c757d', fontSize: '16px', width: '30px', height: '30px' }}>
                       {prediccionPrevia ? prediccionPrevia.prediccion_goles_visitante : '-'}
                     </span>
-                    <span style={{fontSize: '14px'}}>{partido.equipo_visitante}</span>
+                    <span style={{ fontSize: '14px' }}>{partido.equipo_visitante}</span>
                   </div>
                 </div>
 
-                <div style={{fontSize: '24px'}}>👉</div>
+                <div style={{ fontSize: '24px' }}>👉</div>
 
                 {/* Bloque Resultado Real */}
                 <div style={{ textAlign: 'center', flex: 1, border: '2px solid #28a745', padding: '10px', borderRadius: '5px', backgroundColor: 'white' }}>
                   <div style={{ fontSize: '12px', color: '#28a745', fontWeight: 'bold', marginBottom: '5px' }}>Resultado Real</div>
-                  <div style={{...contenedorMarcadorStyle, backgroundColor: 'transparent', gap: '8px'}}>
-                    <span style={{fontSize: '14px', fontWeight: 'bold'}}>{partido.equipo_local}</span>
+                  <div style={{ ...contenedorMarcadorStyle, backgroundColor: 'transparent', gap: '8px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{partido.equipo_local}</span>
                     <span style={circuloGolesStyle}>
                       {partido.resultado_real.goles_local}
                     </span>
-                    <span style={{fontWeight: 'bold', fontSize: '20px'}}>-</span>
+                    <span style={{ fontWeight: 'bold', fontSize: '20px' }}>-</span>
                     <span style={circuloGolesStyle}>
                       {partido.resultado_real.goles_visitante}
                     </span>
-                    <span style={{fontSize: '14px', fontWeight: 'bold'}}>{partido.equipo_visitante}</span>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{partido.equipo_visitante}</span>
                   </div>
                 </div>
               </div>
@@ -145,7 +145,7 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
               {/* Fila 2: Comparativa de Eventos Especiales */}
               <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', fontSize: '13px', color: '#555', borderTop: '1px solid #eee', paddingTop: '10px' }}>
                 <span>
-                  🔴 Roja: real <strong>{partido.eventos_especiales.hubo_roja ? 'Sí' : 'No'}</strong> 
+                  🔴 Roja: real <strong>{partido.eventos_especiales.hubo_roja ? 'Sí' : 'No'}</strong>
                   (pusiste {prediccionPrevia?.prediccion_roja ? 'Sí' : 'No'})
                 </span>
                 <span>
@@ -160,19 +160,19 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
               <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', alignItems: 'center', marginBottom: '15px' }}>
                 <div style={{ textAlign: 'center' }}>
                   <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>{partido.equipo_local}</label>
-                  <input 
+                  <input
                     type="number" min="0" value={golesLocal}
                     onChange={(e) => setGolesLocal(e.target.value)}
-                    style={{ width: '50px', textAlign: 'center', fontSize: '18px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }} 
+                    style={{ width: '50px', textAlign: 'center', fontSize: '18px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
                   />
                 </div>
                 <span style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '20px' }}>-</span>
                 <div style={{ textAlign: 'center' }}>
                   <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>{partido.equipo_visitante}</label>
-                  <input 
+                  <input
                     type="number" min="0" value={golesVisitante}
                     onChange={(e) => setGolesVisitante(e.target.value)}
-                    style={{ width: '50px', textAlign: 'center', fontSize: '18px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }} 
+                    style={{ width: '50px', textAlign: 'center', fontSize: '18px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
                   />
                 </div>
               </div>
@@ -189,7 +189,7 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
               </div>
 
               <div style={{ textAlign: 'center' }}>
-                <button 
+                <button
                   onClick={guardarPrediccion}
                   style={{ padding: '10px 25px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>
                   Guardar Pronóstico
@@ -223,7 +223,7 @@ const TablaPosiciones = ({ partidos }) => {
     if (p.estado === 'finalizado' && p.resultado_real) {
       const gl = p.resultado_real.goles_local;
       const gv = p.resultado_real.goles_visitante;
-      
+
       equipos[p.equipo_local].pj++;
       equipos[p.equipo_visitante].pj++;
       equipos[p.equipo_local].gf += gl;
@@ -309,10 +309,10 @@ export default function Dashboard() {
     setLineasOcultas(prev => ({ ...prev, [usuario]: !prev[usuario] }));
   };
   const [cargando, setCargando] = useState(true);
-  
+
   // Agregamos 'estadisticas' como una posible pestaña
-  const [tabActiva, setTabActiva] = useState('hoy'); 
-  
+  const [tabActiva, setTabActiva] = useState('hoy');
+
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const nombreUsuario = localStorage.getItem('nombre_usuario') || 'Jugador';
@@ -325,19 +325,19 @@ export default function Dashboard() {
 
     const cargarDatos = async () => {
       try {
-        const resPartidos = await fetch('http://localhost:5000/api/partidos');
+        const resPartidos = await fetch('https://prode-mundial-t3nt.onrender.com/api/partidos');
         const dataPartidos = await resPartidos.json();
-        
-        const resPredicciones = await fetch('http://localhost:5000/api/predicciones/mias', {
+
+        const resPredicciones = await fetch('https://prode-mundial-t3nt.onrender.com/api/predicciones/mias', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const dataPredicciones = await resPredicciones.json();
 
-        const resRanking = await fetch('http://localhost:5000/api/usuarios/ranking');
+        const resRanking = await fetch('https://prode-mundial-t3nt.onrender.com/api/usuarios/ranking');
         const dataRanking = await resRanking.json();
 
         // NUEVO: Pedimos el historial para el gráfico
-        const resHistorial = await fetch('http://localhost:5000/api/usuarios/historial');
+        const resHistorial = await fetch('https://prode-mundial-t3nt.onrender.com/api/usuarios/historial');
         const dataHistorial = await resHistorial.json();
 
         // --- LÓGICA MÁGICA: Transformar datos crudos a líneas acumulativas por día ---
@@ -347,7 +347,7 @@ export default function Dashboard() {
           fechasSet.add(diaCorto);
           item.diaCorto = diaCorto; // Lo guardamos para usarlo rápido después
         });
-        
+
         const fechasOrdenadas = Array.from(fechasSet).sort();
         const todosLosUsuarios = dataRanking.map(u => u.nombre); // Todos los que participan
 
@@ -356,10 +356,10 @@ export default function Dashboard() {
 
         const dataFormateada = fechasOrdenadas.map(fecha => {
           const puntoEnElTiempo = { nombreCorta: fecha.slice(5) }; // Ej: "06-15"
-          
+
           // Buscamos los puntos que se repartieron ESE día específico
           const repartidosHoy = dataHistorial.filter(item => item.diaCorto === fecha);
-          
+
           repartidosHoy.forEach(item => {
             acumuladores[item.usuario] += item.puntos;
           });
@@ -428,7 +428,7 @@ export default function Dashboard() {
 
   return (
     <div style={{ display: 'flex', gap: '30px', fontFamily: 'sans-serif', minHeight: '100vh', backgroundColor: '#f4f7f6' }}>
-      
+
       {/* --- COLUMNA 1: EL RANKING (FIJA A LA IZQUIERDA) --- */}
       <div style={{ flex: '0 0 300px', backgroundColor: '#e9ecef', padding: '30px', borderRight: '1px solid #ddd', borderBottom: '1px solid #ddd', borderRadius: '0 0 10px 0' }}>
         <h3 style={{ margin: '0 0 20px 0', textAlign: 'center', color: '#333' }}>📊 Tabla de Posiciones</h3>
@@ -456,7 +456,7 @@ export default function Dashboard() {
 
       {/* --- COLUMNA 2: EL CONTENIDO PRINCIPAL --- */}
       <div style={{ flex: 1, padding: '30px', overflowY: 'auto' }}>
-        
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingBottom: '20px', borderBottom: '2px solid #ddd' }}>
           <h1 style={{ margin: 0, fontSize: '28px', color: '#1a1a1a' }}>🏆 Hola, {nombreUsuario}</h1>
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -497,7 +497,7 @@ export default function Dashboard() {
 
         {/* CONTENIDO DE LA PESTAÑA: FIXTURE */}
         {tabActiva === 'fixture' && (
-           /* ... (Todo el contenido de fixture queda igual que el mensaje anterior) ... */
+          /* ... (Todo el contenido de fixture queda igual que el mensaje anterior) ... */
           <div>
             {Object.keys(fixtureAgrupado).length === 0 ? (
               <p style={{ textAlign: 'center' }}>No hay partidos cargados en el fixture.</p>
@@ -531,7 +531,7 @@ export default function Dashboard() {
         {tabActiva === 'estadisticas' && (
           <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #eee', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
             <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>Evolución de Puntos a través del Mundial</h3>
-            
+
             {datosGrafico.data.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#666' }}>Aún no hay puntos repartidos para graficar.</p>
             ) : (
@@ -569,13 +569,13 @@ export default function Dashboard() {
                       <Tooltip />
                       {/* Generamos una línea de gráfico automáticamente por cada usuario */}
                       {datosGrafico.usuarios.map((usuario, index) => (
-                        <Line 
-                          key={usuario} 
-                          type="monotone" 
-                          dataKey={usuario} 
-                          stroke={COLORES[index % COLORES.length]} 
+                        <Line
+                          key={usuario}
+                          type="monotone"
+                          dataKey={usuario}
+                          stroke={COLORES[index % COLORES.length]}
                           strokeWidth={3}
-                          activeDot={{ r: 8 }} 
+                          activeDot={{ r: 8 }}
                           hide={lineasOcultas[usuario]}
                         />
                       ))}

@@ -6,7 +6,7 @@ export default function Login() {
   const [nombre, setNombre] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
+
   // Herramienta de React Router para cambiar de página
   const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ export default function Login() {
 
     try {
       // Le pegamos a nuestra API de Node.js
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch('https://prode-mundial-t3nt.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, password })
@@ -29,7 +29,7 @@ export default function Login() {
         localStorage.setItem('token', data.token);
         // Opcional: guardamos el nombre del usuario para saludarlo después
         localStorage.setItem('nombre_usuario', data.usuario.nombre);
-        
+
         // Lo mandamos directo a la cancha (Dashboard)
         navigate('/dashboard');
       } else {
@@ -45,26 +45,26 @@ export default function Login() {
     <div style={{ maxWidth: '400px', margin: '100px auto', textAlign: 'center', fontFamily: 'sans-serif' }}>
       <h1>🏆 Prode Mundial 2026</h1>
       <p>Iniciá sesión para hacer tus pronósticos</p>
-      
+
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
-        <input 
-          type="text" 
-          placeholder="Tu nombre de usuario" 
+        <input
+          type="text"
+          placeholder="Tu nombre de usuario"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
           style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ccc' }}
         />
-        <input 
-          type="password" 
-          placeholder="Tu contraseña" 
+        <input
+          type="password"
+          placeholder="Tu contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ccc' }}
         />
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           style={{ padding: '12px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
           Entrar a Jugar
         </button>
