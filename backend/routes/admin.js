@@ -10,7 +10,7 @@ function calcularPosiciones(partidosSimulados) {
   for (const p of partidosSimulados) {
     if (!equipos[p.equipo_local]) equipos[p.equipo_local] = { nombre: p.equipo_local, pts: 0, dif: 0, gf: 0 };
     if (!equipos[p.equipo_visitante]) equipos[p.equipo_visitante] = { nombre: p.equipo_visitante, pts: 0, dif: 0, gf: 0 };
-    
+
     const gl = p.goles_local;
     const gv = p.goles_visitante;
 
@@ -48,7 +48,7 @@ router.post('/resultado/:partido_id', auth, async (req, res) => {
     // 1. Buscamos el partido y verificamos que no esté ya finalizado
     const partido = await Partido.findById(partido_id);
     if (!partido) return res.status(404).json({ mensaje: 'Partido no encontrado' });
-    
+
     if (partido.estado === 'finalizado') {
       return res.status(400).json({ mensaje: 'Este partido ya fue procesado antes.' });
     }
@@ -90,9 +90,9 @@ router.post('/resultado/:partido_id', auth, async (req, res) => {
       });
     }
 
-    res.json({ 
-      mensaje: `¡Resultados cargados y ranking actualizado!`, 
-      predicciones_procesadas: predicciones.length 
+    res.json({
+      mensaje: `¡Resultados cargados y ranking actualizado!`,
+      predicciones_procesadas: predicciones.length
     });
 
   } catch (error) {
@@ -104,7 +104,7 @@ router.post('/resultado/:partido_id', auth, async (req, res) => {
 router.post('/bonus/:grupo', auth, async (req, res) => {
   try {
     const { grupo } = req.params;
-    
+
     const partidosDelGrupo = await Partido.find({ grupo_o_fase: grupo });
     if (partidosDelGrupo.length === 0) {
       return res.status(404).json({ mensaje: 'Grupo no encontrado o sin partidos' });
@@ -134,9 +134,9 @@ router.post('/bonus/:grupo', auth, async (req, res) => {
     const [real1, real2] = calcularPosiciones(realMatches);
 
     for (let usuario of usuarios) {
-      const predsUsuario = await Prediccion.find({ 
-        usuario_id: usuario._id, 
-        partido_id: { $in: partidosDelGrupo.map(p => p._id) } 
+      const predsUsuario = await Prediccion.find({
+        usuario_id: usuario._id,
+        partido_id: { $in: partidosDelGrupo.map(p => p._id) }
       });
 
       if (predsUsuario.length === 0) continue;
@@ -145,20 +145,20 @@ router.post('/bonus/:grupo', auth, async (req, res) => {
 
       // Bonus 1: Top 2 teams (Clasificados)
       const userMatches = partidosDelGrupo.map(p => {
-         const pred = predsUsuario.find(pr => pr.partido_id.toString() === p._id.toString());
-         return {
-            equipo_local: p.equipo_local,
-            equipo_visitante: p.equipo_visitante,
-            goles_local: pred ? pred.prediccion_goles_local : 0,
-            goles_visitante: pred ? pred.prediccion_goles_visitante : 0
-         };
+        const pred = predsUsuario.find(pr => pr.partido_id.toString() === p._id.toString());
+        return {
+          equipo_local: p.equipo_local,
+          equipo_visitante: p.equipo_visitante,
+          goles_local: pred ? pred.prediccion_goles_local : 0,
+          goles_visitante: pred ? pred.prediccion_goles_visitante : 0
+        };
       });
       const [user1, user2] = calcularPosiciones(userMatches);
 
       if (user1 === real1 && user2 === real2) {
-         bonusSumados += (2 * X); // Orden correcto
+        bonusSumados += (2 * X); // Orden correcto
       } else if ((user1 === real1 || user1 === real2) && (user2 === real1 || user2 === real2)) {
-         bonusSumados += X; // Orden incorrecto
+        bonusSumados += X; // Orden incorrecto
       }
 
       // Bonus 2: Tendencias / Exactos del Grupo Completo
@@ -166,46 +166,46 @@ router.post('/bonus/:grupo', auth, async (req, res) => {
       let allExactCorrect = true;
 
       if (predsUsuario.length !== partidosDelGrupo.length) {
-         allTendenciesCorrect = false;
-         allExactCorrect = false;
+        allTendenciesCorrect = false;
+        allExactCorrect = false;
       } else {
-         for (let p of partidosDelGrupo) {
-            const pred = predsUsuario.find(pr => pr.partido_id.toString() === p._id.toString());
-            const realL = p.resultado_real.goles_local;
-            const realV = p.resultado_real.goles_visitante;
-            const predL = pred.prediccion_goles_local;
-            const predV = pred.prediccion_goles_visitante;
+        for (let p of partidosDelGrupo) {
+          const pred = predsUsuario.find(pr => pr.partido_id.toString() === p._id.toString());
+          const realL = p.resultado_real.goles_local;
+          const realV = p.resultado_real.goles_visitante;
+          const predL = pred.prediccion_goles_local;
+          const predV = pred.prediccion_goles_visitante;
 
-            if (predL !== realL || predV !== realV) {
-               allExactCorrect = false;
-            }
+          if (predL !== realL || predV !== realV) {
+            allExactCorrect = false;
+          }
 
-            const difReal = realL - realV;
-            const difPred = predL - predV;
-            const tendenciaCorrecta = (difReal > 0 && difPred > 0) || (difReal < 0 && difPred < 0) || (difReal === 0 && difPred === 0);
-            
-            if (!tendenciaCorrecta) {
-               allTendenciesCorrect = false;
-            }
-         }
+          const difReal = realL - realV;
+          const difPred = predL - predV;
+          const tendenciaCorrecta = (difReal > 0 && difPred > 0) || (difReal < 0 && difPred < 0) || (difReal === 0 && difPred === 0);
+
+          if (!tendenciaCorrecta) {
+            allTendenciesCorrect = false;
+          }
+        }
       }
 
       if (allExactCorrect) {
-         bonusSumados += (2 * X);
+        bonusSumados += (8 * X);
       } else if (allTendenciesCorrect) {
-         bonusSumados += X;
+        bonusSumados += 4 * X;
       }
 
       if (bonusSumados > 0) {
-         usuario.puntos_totales += bonusSumados;
-         await usuario.save();
-         
-         // Actualizamos los puntos ganados de la última predicción del grupo
-         const ultimaPred = predsUsuario[predsUsuario.length - 1];
-         if (ultimaPred) {
-             ultimaPred.puntos_ganados = (ultimaPred.puntos_ganados || 0) + bonusSumados;
-             await ultimaPred.save();
-         }
+        usuario.puntos_totales += bonusSumados;
+        await usuario.save();
+
+        // Actualizamos los puntos ganados de la última predicción del grupo
+        const ultimaPred = predsUsuario[predsUsuario.length - 1];
+        if (ultimaPred) {
+          ultimaPred.puntos_ganados = (ultimaPred.puntos_ganados || 0) + bonusSumados;
+          await ultimaPred.save();
+        }
       }
     }
 
