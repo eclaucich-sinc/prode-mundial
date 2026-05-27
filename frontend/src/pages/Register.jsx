@@ -41,9 +41,9 @@ export default function Register() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '100px auto', textAlign: 'center', fontFamily: 'sans-serif' }}>
-      <h1>🏆 Prode Mundial 2026</h1>
-      <p>Creá tu cuenta para empezar a jugar</p>
+    <div className="glass-panel" style={{ maxWidth: '400px', margin: '100px auto', padding: '40px', textAlign: 'center' }}>
+      <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>🏆 Prode Mundial 2026</h1>
+      <p style={{ color: 'var(--text-muted)' }}>Creá tu cuenta para empezar a jugar</p>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
         <input
@@ -52,7 +52,7 @@ export default function Register() {
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
-          style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ccc' }}
+          style={{ padding: '12px', fontSize: '16px', borderRadius: '8px' }}
         />
         <input
           type="password"
@@ -60,7 +60,7 @@ export default function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ccc' }}
+          style={{ padding: '12px', fontSize: '16px', borderRadius: '8px' }}
         />
         <input
           type="password"
@@ -68,20 +68,21 @@ export default function Register() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
-          style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ccc' }}
+          style={{ padding: '12px', fontSize: '16px', borderRadius: '8px' }}
         />
         <button
           type="submit"
-          style={{ padding: '12px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
+          className="btn-primary"
+          style={{ padding: '12px', fontSize: '16px' }}>
           Registrarme
         </button>
       </form>
 
-      {error && <p style={{ color: 'red', marginTop: '15px', fontWeight: 'bold' }}>❌ {error}</p>}
-      {exito && <p style={{ color: 'green', marginTop: '15px', fontWeight: 'bold' }}>✅ {exito}</p>}
+      {error && <p style={{ color: 'var(--danger-color)', marginTop: '15px', fontWeight: 'bold' }}>❌ {error}</p>}
+      {exito && <p style={{ color: 'var(--success-color)', marginTop: '15px', fontWeight: 'bold' }}>✅ {exito}</p>}
 
-      <p style={{ marginTop: '20px', fontSize: '14px' }}>
-        ¿Ya tenés cuenta? <Link to="/login" style={{ color: '#007bff', textDecoration: 'none', fontWeight: 'bold' }}>Iniciá sesión acá</Link>
+      <p style={{ marginTop: '20px', fontSize: '14px', color: 'var(--text-muted)' }}>
+        ¿Ya tenés cuenta? <Link to="/login" style={{ color: 'var(--primary-color)', textDecoration: 'none', fontWeight: 'bold' }}>Iniciá sesión acá</Link>
       </p>
     </div>
   );

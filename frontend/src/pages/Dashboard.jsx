@@ -2,17 +2,105 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+const ModalAyuda = ({ alCerrar }) => (
+  <div style={{
+    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+  }}>
+    <div className="glass-panel" style={{
+      padding: '40px', maxWidth: '800px', width: '90%', maxHeight: '85vh', overflowY: 'auto'
+    }}>
+      <h2 style={{ marginTop: 0, color: 'var(--primary-color)', textAlign: 'center', fontSize: '32px', marginBottom: '20px' }}>🏆 Cómo jugar al Prode Mundial</h2>
+
+      <p style={{ textAlign: 'center', fontSize: '16px', color: 'var(--text-main)', marginBottom: '30px' }}>
+        El objetivo es simple: <strong>acertar la mayor cantidad de resultados</strong> de los partidos del mundial para sumar puntos y levantar la copa del sinc(i).
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '30px' }}>
+        {/* Section: Navegación */}
+        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '10px', border: '1px solid var(--card-border)' }}>
+          <h3 style={{ color: 'var(--primary-color)', margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>🗺️</span> Guía de Navegación
+          </h3>
+          <ul style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8', color: 'var(--text-muted)' }}>
+            <li><strong>📅 Hoy:</strong> Mirá los partidos que se juegan hoy y las predicciones que hiciste.</li>
+            <li><strong>🔜 Mañana:</strong> Acá vas a realizar las predicciones para los partidos del día siguiente.</li>
+            <li><strong>📋 Fixture:</strong> El panorama completo. Navegá por todos los grupos, mirá qué partidos faltan y dejá tus predicciones para cualquier fecha futura.</li>
+          </ul>
+        </div>
+
+        {/* Section: Reglas de Predicción */}
+        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '10px', border: '1px solid var(--card-border)' }}>
+          <h3 style={{ color: '#3b82f6', margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>⏳</span> Reglas Clave
+          </h3>
+          <ul style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8', color: 'var(--text-muted)' }}>
+            <li>Las predicciones <strong>se cierran el mismo día del partido</strong>. Por eso siempre debes predecir en <strong>Mañana</strong> o <strong>Fixture</strong>.</li>
+            <li>No es obligatorio predecir todos los partidos, pero si no lo hacés, ¡perdés la oportunidad de sumar puntos!</li>
+            <li>Una vez finalizado un partido, el sistema actualizará el resultado real y repartirá los puntos correspondientes a todos.</li>
+            <li>Está permitido registrar una IA propia o algún sistema de predicción que juegue por ustedes. Pueden desarrollar algo en grupo si desean. Si hacen algo así, pueden registrar el nombre finalizando con (IA) así es claro que no es un humano tomando decisiones.</li>
+          </ul>
+        </div>
+
+        {/* Section: Puntuación */}
+        <div style={{ background: 'rgba(34, 197, 94, 0.1)', padding: '20px', borderRadius: '10px', border: '1px solid rgba(34,197,94,0.3)' }}>
+          <h3 style={{ color: 'var(--success-color)', margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>⚽</span> Sistema de Puntuación
+          </h3>
+          <div style={{ display: 'flex', gap: '15px', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ background: 'var(--success-color)', color: '#0f172a', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px' }}>+3 Pts</span>
+              <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Acertar la TENDENCIA:</strong> Adivinar quién gana o si hay empate. (Ej: decís 2-1 y termina 1-0).</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ background: 'var(--primary-color)', color: '#0f172a', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px' }}>+5 Pts</span>
+              <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Acertar el resultado EXACTO:</strong> Dar en el clavo con los goles. (Ej: decís 2-1 y termina 2-1).</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Section: Competencia */}
+        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '10px', border: '1px solid var(--card-border)' }}>
+          <h3 style={{ color: '#eab308', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>🤖</span> La Batalla Final
+          </h3>
+          <p style={{ margin: '0 0 10px 0', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+            Este prode es exclusivo interno al equipo <strong>sinc(i)</strong>. Sin embargo, no estaremos compitiendo solo entre nosotros, sino que también contra modelos de IA (Claude Sonnet, Gemini) y predictores aleatorios.
+          </p>
+          <p style={{ margin: 0, color: 'var(--text-main)', lineHeight: '1.6', fontWeight: 'bold' }}>
+            🎁 Habrá premios para el podio al finalizar el mundial... ¡A menos que gane una IA, en ese caso no nos merecemos ganar nada!
+          </p>
+        </div>
+      </div>
+
+      <div style={{ textAlign: 'center', marginTop: '40px' }}>
+        <button
+          onClick={alCerrar}
+          className="btn-primary"
+          style={{ padding: '15px 40px', fontSize: '18px', borderRadius: '30px' }}
+        >
+          ¡Entendido, a jugar!
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 // --- SUB-COMPONENTE MEJORADO: La tarjetita de cada partido con comparativa ---
 const PartidoCard = ({ partido, prediccionPrevia, token }) => {
   // Estados para los inputs de predicción (solo se usan si está pendiente)
   const [golesLocal, setGolesLocal] = useState(prediccionPrevia ? prediccionPrevia.prediccion_goles_local : 0);
   const [golesVisitante, setGolesVisitante] = useState(prediccionPrevia ? prediccionPrevia.prediccion_goles_visitante : 0);
-  const [hayRoja, setHayRoja] = useState(prediccionPrevia ? prediccionPrevia.prediccion_roja : false);
-  const [hayPenal, setHayPenal] = useState(prediccionPrevia ? prediccionPrevia.prediccion_penal : false);
   const [estadoGuardado, setEstadoGuardado] = useState('');
   const [expandido, setExpandido] = useState(false);
 
   const finalizado = partido.estado === 'finalizado';
+
+  const hoyObj = new Date();
+  const hoyStr = `${hoyObj.getUTCFullYear()}-${String(hoyObj.getUTCMonth() + 1).padStart(2, '0')}-${String(hoyObj.getUTCDate()).padStart(2, '0')}`;
+  const partidoObj = new Date(partido.fecha_hora);
+  const partidoStr = `${partidoObj.getUTCFullYear()}-${String(partidoObj.getUTCMonth() + 1).padStart(2, '0')}-${String(partidoObj.getUTCDate()).padStart(2, '0')}`;
+  const prediccionCerrada = hoyStr >= partidoStr;
 
   const fechaFormateada = new Date(partido.fecha_hora).toLocaleString([], {
     day: '2-digit', month: '2-digit',
@@ -31,9 +119,7 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
         body: JSON.stringify({
           partido_id: partido._id,
           prediccion_goles_local: Number(golesLocal),
-          prediccion_goles_visitante: Number(golesVisitante),
-          prediccion_roja: hayRoja,
-          prediccion_penal: hayPenal
+          prediccion_goles_visitante: Number(golesVisitante)
         })
       });
       if (res.ok) {
@@ -55,15 +141,15 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
     gap: '15px',
     padding: '10px',
     borderRadius: '5px',
-    backgroundColor: '#fff'
+    background: 'rgba(255,255,255,0.05)'
   };
 
   const circuloGolesStyle = {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
-    backgroundColor: '#333',
-    color: 'white',
+    background: 'var(--bg-color)',
+    color: 'var(--text-main)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -72,7 +158,7 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
   };
 
   return (
-    <div style={{ border: '1px solid #ddd', borderRadius: '8px', marginBottom: '15px', backgroundColor: finalizado ? '#f1f3f5' : '#f9f9f9', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+    <div style={{ border: '1px solid var(--card-border)', borderRadius: '8px', marginBottom: '15px', background: finalizado ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.05)', overflow: 'hidden' }}>
       {/* Cabecera Clickable (Vista colapsada) */}
       <div
         onClick={() => setExpandido(!expandido)}
@@ -88,14 +174,14 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           {finalizado && (
-            <div style={{ fontSize: '16px', fontWeight: 'bold', backgroundColor: '#e9ecef', padding: '5px 10px', borderRadius: '4px', border: '1px solid #ddd' }}>
+            <div style={{ fontSize: '16px', fontWeight: 'bold', padding: '5px 10px', borderRadius: '4px', border: '1px solid var(--card-border)' }}>
               {partido.resultado_real?.goles_local} - {partido.resultado_real?.goles_visitante}
             </div>
           )}
           {!finalizado && prediccionPrevia && (
-            <span style={{ fontSize: '12px', color: '#28a745', fontWeight: 'bold' }}>✅ Pronosticado</span>
+            <span style={{ fontSize: '12px', color: 'var(--success-color)', fontWeight: 'bold' }}>✅ Pronosticado</span>
           )}
-          <span style={{ fontSize: '12px', color: '#007bff' }}>{expandido ? '▲' : '▼'}</span>
+          <span style={{ fontSize: '12px', color: 'var(--primary-color)' }}>{expandido ? '▲' : '▼'}</span>
         </div>
       </div>
 
@@ -109,14 +195,14 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
               <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', gap: '10px' }}>
                 {/* Bloque Tu Predicción */}
                 <div style={{ textAlign: 'center', flex: 1, border: '1px dashed #ccc', padding: '10px', borderRadius: '5px' }}>
-                  <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>Tu Predicción</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '5px' }}>Tu Predicción</div>
                   <div style={{ ...contenedorMarcadorStyle, backgroundColor: 'transparent', gap: '8px' }}>
                     <span style={{ fontSize: '14px' }}>{partido.equipo_local}</span>
-                    <span style={{ ...circuloGolesStyle, backgroundColor: '#6c757d', fontSize: '16px', width: '30px', height: '30px' }}>
+                    <span style={{ ...circuloGolesStyle, background: 'var(--text-muted)', fontSize: '16px', width: '30px', height: '30px' }}>
                       {prediccionPrevia ? prediccionPrevia.prediccion_goles_local : '-'}
                     </span>
                     <span style={{ fontWeight: 'bold' }}>-</span>
-                    <span style={{ ...circuloGolesStyle, backgroundColor: '#6c757d', fontSize: '16px', width: '30px', height: '30px' }}>
+                    <span style={{ ...circuloGolesStyle, background: 'var(--text-muted)', fontSize: '16px', width: '30px', height: '30px' }}>
                       {prediccionPrevia ? prediccionPrevia.prediccion_goles_visitante : '-'}
                     </span>
                     <span style={{ fontSize: '14px' }}>{partido.equipo_visitante}</span>
@@ -126,8 +212,8 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
                 <div style={{ fontSize: '24px' }}>👉</div>
 
                 {/* Bloque Resultado Real */}
-                <div style={{ textAlign: 'center', flex: 1, border: '2px solid #28a745', padding: '10px', borderRadius: '5px', backgroundColor: 'white' }}>
-                  <div style={{ fontSize: '12px', color: '#28a745', fontWeight: 'bold', marginBottom: '5px' }}>Resultado Real</div>
+                <div style={{ textAlign: 'center', flex: 1, border: '2px solid var(--success-color)', padding: '10px', borderRadius: '5px', background: 'rgba(255,255,255,0.05)' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--success-color)', fontWeight: 'bold', marginBottom: '5px' }}>Resultado Real</div>
                   <div style={{ ...contenedorMarcadorStyle, backgroundColor: 'transparent', gap: '8px' }}>
                     <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{partido.equipo_local}</span>
                     <span style={circuloGolesStyle}>
@@ -142,17 +228,6 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
                 </div>
               </div>
 
-              {/* Fila 2: Comparativa de Eventos Especiales */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', fontSize: '13px', color: '#555', borderTop: '1px solid #eee', paddingTop: '10px' }}>
-                <span>
-                  🔴 Roja: real <strong>{partido.eventos_especiales.hubo_roja ? 'Sí' : 'No'}</strong>
-                  (pusiste {prediccionPrevia?.prediccion_roja ? 'Sí' : 'No'})
-                </span>
-                <span>
-                  ⚽ Penal: real <strong>{partido.eventos_especiales.hubo_penal ? 'Sí' : 'No'}</strong>
-                  (pusiste {prediccionPrevia?.prediccion_penal ? 'Sí' : 'No'})
-                </span>
-              </div>
             </div>
           ) : (
             /* --- DISEÑO SI EL PARTIDO ESTÁ PENDIENTE --- */
@@ -163,7 +238,8 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
                   <input
                     type="number" min="0" value={golesLocal}
                     onChange={(e) => setGolesLocal(e.target.value)}
-                    style={{ width: '50px', textAlign: 'center', fontSize: '18px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    disabled={prediccionCerrada}
+                    style={{ width: '50px', textAlign: 'center', fontSize: '18px', padding: '5px', borderRadius: '4px', opacity: prediccionCerrada ? 0.5 : 1 }}
                   />
                 </div>
                 <span style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '20px' }}>-</span>
@@ -172,36 +248,33 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
                   <input
                     type="number" min="0" value={golesVisitante}
                     onChange={(e) => setGolesVisitante(e.target.value)}
-                    style={{ width: '50px', textAlign: 'center', fontSize: '18px', padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    disabled={prediccionCerrada}
+                    style={{ width: '50px', textAlign: 'center', fontSize: '18px', padding: '5px', borderRadius: '4px', opacity: prediccionCerrada ? 0.5 : 1 }}
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '15px', fontSize: '14px', color: '#555' }}>
-                <label style={{ cursor: 'pointer' }}>
-                  <input type="checkbox" checked={hayRoja} onChange={(e) => setHayRoja(e.target.checked)} style={{ marginRight: '5px' }} />
-                  ¿Habrá Roja?
-                </label>
-                <label style={{ cursor: 'pointer' }}>
-                  <input type="checkbox" checked={hayPenal} onChange={(e) => setHayPenal(e.target.checked)} style={{ marginRight: '5px' }} />
-                  ¿Habrá Penal?
-                </label>
-              </div>
-
-              <div style={{ textAlign: 'center' }}>
-                <button
-                  onClick={guardarPrediccion}
-                  style={{ padding: '10px 25px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>
-                  Guardar Pronóstico
-                </button>
-                <span style={{ marginLeft: '10px', fontWeight: 'bold', fontSize: '14px' }}>{estadoGuardado}</span>
-              </div>
+              {prediccionCerrada ? (
+                <div style={{ textAlign: 'center', color: 'var(--danger-color)', fontWeight: 'bold', fontSize: '14px' }}>
+                  ⏳ Predicciones cerradas.
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center' }}>
+                  <button
+                    onClick={guardarPrediccion}
+                    className="btn-primary"
+                    style={{ padding: '10px 25px', fontSize: '14px' }}>
+                    Guardar Pronóstico
+                  </button>
+                  <span style={{ marginLeft: '10px', fontWeight: 'bold', fontSize: '14px' }}>{estadoGuardado}</span>
+                </div>
+              )}
             </>
           )}
 
           {/* Caja de Puntos (Siempre visible al final) */}
           {prediccionPrevia && prediccionPrevia.puntos_ganados !== null && (
-            <div style={{ textAlign: 'center', marginTop: '15px', padding: '10px', backgroundColor: '#d4edda', borderRadius: '5px', color: '#155724', fontWeight: 'bold', border: '1px solid #c3e6cb' }}>
+            <div style={{ textAlign: 'center', marginTop: '15px', padding: '10px', background: 'rgba(34, 197, 94, 0.2)', borderRadius: '5px', color: 'var(--success-color)', fontWeight: 'bold', border: '1px solid rgba(34,197,94,0.3)' }}>
               🏆 Puntos obtenidos en este partido: {prediccionPrevia.puntos_ganados}
             </div>
           )}
@@ -257,9 +330,9 @@ const TablaPosiciones = ({ partidos }) => {
   });
 
   return (
-    <div style={{ marginBottom: '20px', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'center', backgroundColor: '#fff' }}>
-        <thead style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #ddd', fontSize: '12px', color: '#555' }}>
+    <div style={{ marginBottom: '20px', border: '1px solid var(--card-border)', borderRadius: '8px', overflow: 'hidden' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'center', background: 'rgba(255,255,255,0.05)' }}>
+        <thead style={{ background: 'rgba(0,0,0,0.2)', borderBottom: '2px solid #ddd', fontSize: '12px', color: 'var(--text-muted)' }}>
           <tr>
             <th style={{ padding: '10px', textAlign: 'left' }}>Equipo</th>
             <th style={{ padding: '10px' }}>Pts</th>
@@ -274,12 +347,12 @@ const TablaPosiciones = ({ partidos }) => {
         </thead>
         <tbody>
           {tabla.map((eq, index) => (
-            <tr key={eq.nombre} style={{ borderBottom: '1px solid #eee' }}>
+            <tr key={eq.nombre} style={{ borderBottom: '1px solid var(--card-border)' }}>
               <td style={{ padding: '10px', textAlign: 'left', fontWeight: 'bold' }}>
                 <span style={{ color: index < 2 ? '#28a745' : '#888', marginRight: '8px' }}>{index + 1}</span>
                 {eq.nombre}
               </td>
-              <td style={{ padding: '10px', fontWeight: 'bold', fontSize: '14px', color: '#007bff' }}>{eq.pts}</td>
+              <td style={{ padding: '10px', fontWeight: 'bold', fontSize: '14px', color: 'var(--primary-color)' }}>{eq.pts}</td>
               <td style={{ padding: '10px' }}>{eq.pj}</td>
               <td style={{ padding: '10px' }}>{eq.pg}</td>
               <td style={{ padding: '10px' }}>{eq.pe}</td>
@@ -291,6 +364,40 @@ const TablaPosiciones = ({ partidos }) => {
           ))}
         </tbody>
       </table>
+    </div>
+  );
+};
+
+const FaseCard = ({ fase, dataFase, misPredicciones, token }) => {
+  const [expandido, setExpandido] = useState(false);
+
+  return (
+    <div className="glass-panel" style={{ marginBottom: '30px', padding: '20px' }}>
+      <div
+        onClick={() => setExpandido(!expandido)}
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: expandido ? '2px solid #f4f7f6' : 'none', paddingBottom: expandido ? '10px' : '0', marginBottom: expandido ? '15px' : '0', cursor: 'pointer', userSelect: 'none' }}
+      >
+        <h3 style={{ margin: 0, color: 'var(--primary-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '16px', color: 'var(--text-muted)', transition: 'transform 0.2s' }}>{expandido ? '▼' : '▶'}</span> {fase}
+        </h3>
+        <span style={{ background: 'rgba(34, 197, 94, 0.2)', color: 'var(--success-color)', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
+          Puntos sumados: {dataFase.puntosAcumulados}
+        </span>
+      </div>
+
+      {expandido && (
+        <div style={{ marginTop: '15px' }}>
+          {fase.toLowerCase().includes('grupo') && (
+            <TablaPosiciones partidos={dataFase.partidos} />
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {dataFase.partidos.map(partido => {
+              const prediccionPrevia = misPredicciones.find(p => p.partido_id === partido._id);
+              return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} />;
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -309,6 +416,18 @@ export default function Dashboard() {
     setLineasOcultas(prev => ({ ...prev, [usuario]: !prev[usuario] }));
   };
   const [cargando, setCargando] = useState(true);
+  const [mostrarAyuda, setMostrarAyuda] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem('ayuda_vista')) {
+      setMostrarAyuda(true);
+    }
+  }, []);
+
+  const cerrarAyuda = () => {
+    setMostrarAyuda(false);
+    localStorage.setItem('ayuda_vista', 'true');
+  };
 
   // Agregamos 'estadisticas' como una posible pestaña
   const [tabActiva, setTabActiva] = useState('hoy');
@@ -316,6 +435,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const nombreUsuario = localStorage.getItem('nombre_usuario') || 'Jugador';
+  const rolUsuario = localStorage.getItem('rol_usuario') || 'user';
 
   useEffect(() => {
     if (!token) {
@@ -397,8 +517,14 @@ export default function Dashboard() {
   if (cargando) return <h2 style={{ textAlign: 'center', marginTop: '50px' }}>Cargando la cancha... ⚽</h2>;
 
   const fechaHoyObj = new Date();
-  const stringHoy = `${fechaHoyObj.getFullYear()}-${String(fechaHoyObj.getMonth() + 1).padStart(2, '0')}-${String(fechaHoyObj.getDate()).padStart(2, '0')}`;
+  const stringHoy = `${fechaHoyObj.getUTCFullYear()}-${String(fechaHoyObj.getUTCMonth() + 1).padStart(2, '0')}-${String(fechaHoyObj.getUTCDate()).padStart(2, '0')}`;
+
+  const fechaMananaObj = new Date();
+  fechaMananaObj.setUTCDate(fechaMananaObj.getUTCDate() + 1);
+  const stringManana = `${fechaMananaObj.getUTCFullYear()}-${String(fechaMananaObj.getUTCMonth() + 1).padStart(2, '0')}-${String(fechaMananaObj.getUTCDate()).padStart(2, '0')}`;
+
   const partidosDeHoy = partidos.filter(partido => partido.fecha_hora && partido.fecha_hora.startsWith(stringHoy));
+  const partidosDeManana = partidos.filter(partido => partido.fecha_hora && partido.fecha_hora.startsWith(stringManana));
 
   const fixtureAgrupado = partidos.reduce((acc, partido) => {
     const fase = partido.grupo_o_fase;
@@ -417,9 +543,9 @@ export default function Dashboard() {
   const tabStyle = (activa) => ({
     padding: '10px 20px',
     cursor: 'pointer',
-    borderBottom: activa ? '3px solid #007bff' : '3px solid transparent',
+    borderBottom: activa ? '3px solid var(--primary-color)' : '3px solid transparent',
     fontWeight: activa ? 'bold' : 'normal',
-    color: activa ? '#007bff' : '#555',
+    color: activa ? 'var(--primary-color)' : 'var(--text-muted)',
     backgroundColor: 'transparent',
     borderTop: 'none', borderLeft: 'none', borderRight: 'none',
     fontSize: '16px',
@@ -427,14 +553,14 @@ export default function Dashboard() {
   });
 
   return (
-    <div style={{ display: 'flex', gap: '30px', fontFamily: 'sans-serif', minHeight: '100vh', backgroundColor: '#f4f7f6' }}>
+    <div style={{ display: 'flex', gap: '30px', minHeight: '100vh' }}>
 
       {/* --- COLUMNA 1: EL RANKING (FIJA A LA IZQUIERDA) --- */}
-      <div style={{ flex: '0 0 300px', backgroundColor: '#e9ecef', padding: '30px', borderRight: '1px solid #ddd', borderBottom: '1px solid #ddd', borderRadius: '0 0 10px 0' }}>
-        <h3 style={{ margin: '0 0 20px 0', textAlign: 'center', color: '#333' }}>📊 Tabla de Posiciones</h3>
+      <div className="glass-panel" style={{ flex: '0 0 300px', padding: '30px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', borderRadius: '0 0 10px 0' }}>
+        <h3 style={{ margin: '0 0 20px 0', textAlign: 'center', color: 'var(--primary-color)' }}>📊 Tabla de Posiciones</h3>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid #ccc' }}>
+            <tr style={{ borderBottom: '2px solid var(--card-border)' }}>
               <th style={{ padding: '10px' }}>#</th>
               <th style={{ padding: '10px' }}>Jugador</th>
               <th style={{ padding: '10px', textAlign: 'center' }}>Pts</th>
@@ -442,7 +568,7 @@ export default function Dashboard() {
           </thead>
           <tbody>
             {ranking.map((user, index) => (
-              <tr key={user._id} style={{ borderBottom: '1px solid #ddd', backgroundColor: user.nombre === nombreUsuario ? '#d4edda' : 'transparent', fontWeight: user.nombre === nombreUsuario ? 'bold' : 'normal' }}>
+              <tr key={user._id} style={{ borderBottom: '1px solid var(--card-border)', backgroundColor: user.nombre === nombreUsuario ? 'rgba(250, 204, 21, 0.2)' : 'transparent', fontWeight: user.nombre === nombreUsuario ? 'bold' : 'normal' }}>
                 <td style={{ padding: '10px' }}>{index + 1}</td>
                 <td style={{ padding: '10px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {index === 0 && '🥇 '}{index === 1 && '🥈 '}{index === 2 && '🥉 '}{user.nombre}
@@ -458,17 +584,24 @@ export default function Dashboard() {
       <div style={{ flex: 1, padding: '30px', overflowY: 'auto' }}>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingBottom: '20px', borderBottom: '2px solid #ddd' }}>
-          <h1 style={{ margin: 0, fontSize: '28px', color: '#1a1a1a' }}>🏆 Hola, {nombreUsuario}</h1>
+          <h1 style={{ margin: 0, fontSize: '28px', color: 'var(--text-main)' }}>🏆 Hola, {nombreUsuario}</h1>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={() => navigate('/admin')} style={{ padding: '10px 20px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px' }}>⚙️ Admin</button>
-            <button onClick={cerrarSesion} style={{ padding: '10px 20px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px' }}>Salir</button>
+            <button onClick={() => setMostrarAyuda(true)} style={{ padding: '10px 20px', background: 'var(--success-color)', color: 'var(--text-main)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}>❔ Ayuda</button>
+            {rolUsuario === 'admin' && (
+              <button onClick={() => navigate('/admin')} style={{ padding: '10px 20px', background: 'var(--text-muted)', color: 'var(--text-main)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px' }}>⚙️ Admin</button>
+            )}
+            <button onClick={cerrarSesion} style={{ padding: '10px 20px', background: 'var(--danger-color)', color: 'var(--text-main)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px' }}>Salir</button>
           </div>
         </div>
+        {mostrarAyuda && <ModalAyuda alCerrar={cerrarAyuda} />}
 
         {/* NAVEGACIÓN DE PESTAÑAS (AGREGAMOS ESTADÍSTICAS) */}
-        <div style={{ display: 'flex', borderBottom: '1px solid #ddd', marginBottom: '30px' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid var(--card-border)', marginBottom: '30px' }}>
           <button style={tabStyle(tabActiva === 'hoy')} onClick={() => setTabActiva('hoy')}>
             📅 Hoy
+          </button>
+          <button style={tabStyle(tabActiva === 'manana')} onClick={() => setTabActiva('manana')}>
+            🔜 Mañana
           </button>
           <button style={tabStyle(tabActiva === 'fixture')} onClick={() => setTabActiva('fixture')}>
             📋 Fixture
@@ -483,11 +616,27 @@ export default function Dashboard() {
         {tabActiva === 'hoy' && (
           <div>
             {partidosDeHoy.length === 0 ? (
-              <p style={{ textAlign: 'center', padding: '40px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #eee' }}>
+              <p className="glass-panel" style={{ textAlign: 'center', padding: '40px' }}>
                 No hay partidos programados para el día de hoy.
               </p>
             ) : (
               partidosDeHoy.map(partido => {
+                const prediccionPrevia = misPredicciones.find(p => p.partido_id === partido._id);
+                return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} />;
+              })
+            )}
+          </div>
+        )}
+
+        {/* CONTENIDO DE LA PESTAÑA: MAÑANA */}
+        {tabActiva === 'manana' && (
+          <div>
+            {partidosDeManana.length === 0 ? (
+              <p className="glass-panel" style={{ textAlign: 'center', padding: '40px' }}>
+                No hay partidos programados para mañana.
+              </p>
+            ) : (
+              partidosDeManana.map(partido => {
                 const prediccionPrevia = misPredicciones.find(p => p.partido_id === partido._id);
                 return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} />;
               })
@@ -503,23 +652,7 @@ export default function Dashboard() {
               <p style={{ textAlign: 'center' }}>No hay partidos cargados en el fixture.</p>
             ) : (
               Object.keys(fixtureAgrupado).map(fase => (
-                <div key={fase} style={{ marginBottom: '30px', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #eee' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f4f7f6', paddingBottom: '10px', marginBottom: '15px' }}>
-                    <h3 style={{ margin: 0, color: '#333' }}>{fase}</h3>
-                    <span style={{ backgroundColor: '#e2f0d9', color: '#2e7d32', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
-                      Puntos sumados: {fixtureAgrupado[fase].puntosAcumulados}
-                    </span>
-                  </div>
-                  {fase.toLowerCase().includes('grupo') && (
-                    <TablaPosiciones partidos={fixtureAgrupado[fase].partidos} />
-                  )}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {fixtureAgrupado[fase].partidos.map(partido => {
-                      const prediccionPrevia = misPredicciones.find(p => p.partido_id === partido._id);
-                      return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} />;
-                    })}
-                  </div>
-                </div>
+                <FaseCard key={fase} fase={fase} dataFase={fixtureAgrupado[fase]} misPredicciones={misPredicciones} token={token} />
               ))
             )}
           </div>
@@ -529,14 +662,14 @@ export default function Dashboard() {
 
         {/* NUEVO: CONTENIDO DE LA PESTAÑA: ESTADÍSTICAS */}
         {tabActiva === 'estadisticas' && (
-          <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #eee', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+          <div className="glass-panel" style={{ padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
             <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>Evolución de Puntos a través del Mundial</h3>
 
             {datosGrafico.data.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#666' }}>Aún no hay puntos repartidos para graficar.</p>
+              <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Aún no hay puntos repartidos para graficar.</p>
             ) : (
               <>
-                <p style={{ textAlign: 'center', fontSize: '13px', color: '#666', marginBottom: '10px' }}>
+                <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '10px' }}>
                   Haz clic en un jugador para ocultarlo/mostrarlo:
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', marginBottom: '20px' }}>

@@ -5,8 +5,6 @@ import { useNavigate } from 'react-router-dom';
 const PartidoAdminCard = ({ partido, token }) => {
   const [golesLocal, setGolesLocal] = useState('');
   const [golesVisitante, setGolesVisitante] = useState('');
-  const [huboRoja, setHuboRoja] = useState(false);
-  const [huboPenal, setHuboPenal] = useState(false);
   const [estadoCarga, setEstadoCarga] = useState('');
 
   const cargarResultadoReal = async () => {
@@ -32,9 +30,7 @@ const PartidoAdminCard = ({ partido, token }) => {
         },
         body: JSON.stringify({
           goles_local: Number(golesLocal),
-          goles_visitante: Number(golesVisitante),
-          hubo_roja: huboRoja,
-          hubo_penal: huboPenal
+          goles_visitante: Number(golesVisitante)
         })
       });
 
@@ -55,23 +51,22 @@ const PartidoAdminCard = ({ partido, token }) => {
   const finalizado = partido.estado === 'finalizado';
 
   return (
-    <div style={{ border: '2px solid #333', borderRadius: '8px', padding: '15px', marginBottom: '15px', backgroundColor: finalizado ? '#e0e0e0' : '#fff3cd' }}>
+    <div style={{ border: '1px solid var(--card-border)', borderRadius: '8px', padding: '15px', marginBottom: '15px', background: finalizado ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.05)' }}>
       <h3 style={{ margin: '0 0 5px 0', textAlign: 'center' }}>
         {partido.equipo_local} vs {partido.equipo_visitante}
       </h3>
-      <p style={{ margin: '0 0 10px 0', textAlign: 'center', fontSize: '14px', color: '#666' }}>
+      <p style={{ margin: '0 0 10px 0', textAlign: 'center', fontSize: '14px', color: 'var(--text-muted)' }}>
         {new Date(partido.fecha_hora).toLocaleString([], { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' })}
       </p>
 
       {finalizado ? (
-        <div style={{ textAlign: 'center', color: '#555' }}>
+        <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
           <p><strong>PARTIDO CERRADO Y PUNTOS REPARTIDOS</strong></p>
           <p>Resultado Oficial: {partido.resultado_real.goles_local} - {partido.resultado_real.goles_visitante}</p>
-          <p>Roja: {partido.eventos_especiales.hubo_roja ? 'Sí' : 'No'} | Penal: {partido.eventos_especiales.hubo_penal ? 'Sí' : 'No'}</p>
         </div>
       ) : (
         <>
-          <p style={{ textAlign: 'center', fontWeight: 'bold', color: '#856404' }}>Ingresar Resultado Real</p>
+          <p style={{ textAlign: 'center', fontWeight: 'bold', color: 'var(--primary-color)' }}>Ingresar Resultado Real</p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', alignItems: 'center', marginBottom: '15px' }}>
             <input
               type="number" min="0" placeholder="L" value={golesLocal}
@@ -86,21 +81,13 @@ const PartidoAdminCard = ({ partido, token }) => {
             />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '15px', fontSize: '14px' }}>
-            <label>
-              <input type="checkbox" checked={huboRoja} onChange={(e) => setHuboRoja(e.target.checked)} />
-              Hubo Roja
-            </label>
-            <label>
-              <input type="checkbox" checked={huboPenal} onChange={(e) => setHuboPenal(e.target.checked)} />
-              Hubo Penal
-            </label>
-          </div>
+          <div style={{ marginBottom: '15px' }}></div>
 
           <div style={{ textAlign: 'center' }}>
             <button
               onClick={cargarResultadoReal}
-              style={{ padding: '8px 20px', backgroundColor: '#343a40', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+              className="btn-primary"
+              style={{ padding: '8px 20px' }}>
               Procesar y Repartir Puntos
             </button>
             <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{estadoCarga}</p>
@@ -147,10 +134,15 @@ export default function Admin() {
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  const rolUsuario = localStorage.getItem('rol_usuario');
 
   useEffect(() => {
     if (!token) {
       navigate('/login');
+      return;
+    }
+    if (rolUsuario !== 'admin') {
+      navigate('/dashboard');
       return;
     }
 
@@ -278,7 +270,7 @@ export default function Admin() {
             <input type="text" placeholder="Fecha (DD/MM)" required value={nuevaFecha} onChange={(e) => setNuevaFecha(e.target.value)} style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
             <input type="text" placeholder="Hora (HH:MM)" required value={nuevaHora} onChange={(e) => setNuevaHora(e.target.value)} style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
           </div>
-          <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+          <button type="submit" style={{ padding: '10px', background: 'var(--success-color)', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
             Guardar Partido en el Fixture
           </button>
           {mensajeCreacion && <p style={{ textAlign: 'center', margin: '5px 0 0 0', fontWeight: 'bold', color: '#28a745' }}>{mensajeCreacion}</p>}
@@ -309,9 +301,9 @@ export default function Admin() {
       </div>
 
       {/* --- LISTA DE PARTIDOS FILTRADOS --- */}
-      <h3 style={{ marginBottom: '15px', color: '#333' }}>Partidos - {tabActiva}</h3>
+      <h3 style={{ marginBottom: '15px', color: 'var(--primary-color)' }}>Partidos - {tabActiva}</h3>
       {partidosDeLaFase.length === 0 ? (
-        <p style={{ textAlign: 'center', padding: '30px', backgroundColor: '#f8f9fa', borderRadius: '8px', color: '#666' }}>
+        <p style={{ textAlign: 'center', padding: '30px', backgroundColor: '#f8f9fa', borderRadius: '8px', color: 'var(--text-muted)' }}>
           No hay partidos cargados en {tabActiva}.
         </p>
       ) : (

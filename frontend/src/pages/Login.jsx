@@ -29,6 +29,7 @@ export default function Login() {
         localStorage.setItem('token', data.token);
         // Opcional: guardamos el nombre del usuario para saludarlo después
         localStorage.setItem('nombre_usuario', data.usuario.nombre);
+        localStorage.setItem('rol_usuario', data.usuario.rol);
 
         // Lo mandamos directo a la cancha (Dashboard)
         navigate('/dashboard');
@@ -42,9 +43,9 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '100px auto', textAlign: 'center', fontFamily: 'sans-serif' }}>
-      <h1>🏆 Prode Mundial 2026</h1>
-      <p>Iniciá sesión para hacer tus pronósticos</p>
+    <div className="glass-panel" style={{ maxWidth: '400px', margin: '100px auto', padding: '40px', textAlign: 'center' }}>
+      <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>🏆 Prode Mundial 2026</h1>
+      <p style={{ color: 'var(--text-muted)' }}>Iniciá sesión para hacer tus pronósticos</p>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
         <input
@@ -53,7 +54,7 @@ export default function Login() {
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
-          style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ccc' }}
+          style={{ padding: '12px', fontSize: '16px', borderRadius: '8px' }}
         />
         <input
           type="password"
@@ -61,20 +62,21 @@ export default function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: '1px solid #ccc' }}
+          style={{ padding: '12px', fontSize: '16px', borderRadius: '8px' }}
         />
         <button
           type="submit"
-          style={{ padding: '12px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold' }}>
+          className="btn-primary"
+          style={{ padding: '12px', fontSize: '16px' }}>
           Entrar a Jugar
         </button>
       </form>
 
       {/* Si hay un error, lo mostramos en rojo */}
-      {error && <p style={{ color: 'red', marginTop: '15px', fontWeight: 'bold' }}>❌ {error}</p>}
+      {error && <p style={{ color: 'var(--danger-color)', marginTop: '15px', fontWeight: 'bold' }}>❌ {error}</p>}
 
-      <p style={{ marginTop: '20px', fontSize: '14px' }}>
-        ¿No tenés cuenta? <Link to="/register" style={{ color: '#007bff', textDecoration: 'none', fontWeight: 'bold' }}>Registrate acá</Link>
+      <p style={{ marginTop: '20px', fontSize: '14px', color: 'var(--text-muted)' }}>
+        ¿No tenés cuenta? <Link to="/register" style={{ color: 'var(--primary-color)', textDecoration: 'none', fontWeight: 'bold' }}>Registrate acá</Link>
       </p>
     </div>
   );
