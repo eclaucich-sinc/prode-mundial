@@ -10,10 +10,6 @@ const partidoSchema = new mongoose.Schema({
   resultado_real: {
     goles_local: { type: Number, default: null },
     goles_visitante: { type: Number, default: null }
-  },
-  eventos_especiales: {
-    hubo_roja: { type: Boolean, default: false },
-    hubo_penal: { type: Boolean, default: false }
   }
 });
 

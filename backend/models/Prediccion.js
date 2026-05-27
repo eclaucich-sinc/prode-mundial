@@ -5,8 +5,6 @@ const prediccionSchema = new mongoose.Schema({
   partido_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Partido', required: true },
   prediccion_goles_local: { type: Number, required: true },
   prediccion_goles_visitante: { type: Number, required: true },
-  prediccion_roja: { type: Boolean, default: false },
-  prediccion_penal: { type: Boolean, default: false },
   puntos_ganados: { type: Number, default: null } // Se calcula después del partido
 });
 

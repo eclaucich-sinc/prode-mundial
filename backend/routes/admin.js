@@ -9,7 +9,7 @@ const auth = require('../middleware/auth'); // Usamos el token para verificar qu
 router.post('/resultado/:partido_id', auth, async (req, res) => {
   try {
     const { partido_id } = req.params;
-    const { goles_local, goles_visitante, hubo_roja, hubo_penal } = req.body;
+    const { goles_local, goles_visitante } = req.body;
 
     // 1. Buscamos el partido y verificamos que no esté ya finalizado
     const partido = await Partido.findById(partido_id);
@@ -22,7 +22,6 @@ router.post('/resultado/:partido_id', auth, async (req, res) => {
     // 2. Actualizamos el partido con la realidad
     partido.estado = 'finalizado';
     partido.resultado_real = { goles_local, goles_visitante };
-    partido.eventos_especiales = { hubo_roja, hubo_penal };
     await partido.save();
 
     // 3. Buscamos TODAS las predicciones que la gente hizo para este partido
@@ -46,20 +45,6 @@ router.post('/resultado/:partido_id', auth, async (req, res) => {
         puntosSumados += 3; // Acertó la tendencia (ganador o empate)
       }
 
-      // --- Puntos por Eventos Especiales (Bonus) ---
-      // Si el usuario puso que SI a la roja, y hubo roja (o si puso que NO, y no hubo)
-      if (hubo_roja===false && pred.prediccion_roja===false){
-        puntosSumados += 1;
-      }
-      else if (hubo_roja===true && pred.prediccion_roja===true){
-        puntosSumados += 2;
-      }
-      if (hubo_penal===false && pred.prediccion_penal===false){
-        puntosSumados += 1;
-      }
-      else if (hubo_penal===true && pred.prediccion_penal===true){
-        puntosSumados += 2;
-      }
 
       // 5. Guardamos los puntos en la predicción para el historial
       pred.puntos_ganados = puntosSumados;
