@@ -56,9 +56,9 @@ const ModalAyuda = ({ alCerrar }) => (
               <span style={{ background: 'var(--primary-color)', color: '#0f172a', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+5 Pts</span>
               <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Acertar el resultado EXACTO:</strong> Dar en el clavo con los goles. (Ej: decís 2-1 y termina 2-1).</span>
             </div>
-            
+
             <h4 style={{ color: 'var(--text-main)', margin: '10px 0 0 0', borderBottom: '1px solid var(--card-border)', paddingBottom: '5px' }}>🎁 Bonus de Fase de Grupos (Al finalizar cada grupo)</h4>
-            
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               <span style={{ background: '#8b5cf6', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+5 Pts</span>
               <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Clasificados (Desordenados):</strong> Acertar los 2 equipos que pasan a la siguiente ronda, pero en el orden incorrecto.</span>
@@ -68,11 +68,11 @@ const ModalAyuda = ({ alCerrar }) => (
               <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Clasificados (Exactos):</strong> Acertar los 2 equipos que pasan a la siguiente ronda en el orden exacto (1ro y 2do).</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <span style={{ background: '#ec4899', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+5 Pts</span>
+              <span style={{ background: '#ec4899', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+20 Pts</span>
               <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Gurú de Tendencias:</strong> Acertar la TENDENCIA (quién gana o empate) de TODOS los partidos de un grupo.</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <span style={{ background: '#ec4899', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+10 Pts</span>
+              <span style={{ background: '#ec4899', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+40 Pts</span>
               <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Perfección de Grupo:</strong> Acertar el RESULTADO EXACTO de TODOS los partidos de un grupo.</span>
             </div>
           </div>
