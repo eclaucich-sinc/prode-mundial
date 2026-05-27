@@ -210,6 +210,27 @@ export default function Admin() {
     }
   };
 
+  const calcularBonusGrupo = async () => {
+    if (!window.confirm(`¿Confirmás calcular el bonus para ${tabActiva}? Esto solo debe hacerse cuando todos los partidos del grupo estén finalizados y no se puede deshacer.`)) return;
+
+    try {
+      const res = await fetch(`https://prode-mundial-t3nt.onrender.com/api/admin/bonus/${tabActiva}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+         alert(`✅ ${data.mensaje}`);
+         // Recargar para que se actualicen las flags si fuera necesario
+         window.location.reload();
+      } else {
+         alert(`❌ Error: ${data.mensaje}`);
+      }
+    } catch(err) {
+      alert("❌ Error de conexión");
+    }
+  };
+
   // NUEVO: Filtramos los partidos según la pestaña seleccionada
   const partidosDeLaFase = partidos.filter(
     partido => partido.grupo_o_fase === tabActiva
@@ -301,7 +322,17 @@ export default function Admin() {
       </div>
 
       {/* --- LISTA DE PARTIDOS FILTRADOS --- */}
-      <h3 style={{ marginBottom: '15px', color: 'var(--primary-color)' }}>Partidos - {tabActiva}</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+        <h3 style={{ margin: 0, color: 'var(--primary-color)' }}>Partidos - {tabActiva}</h3>
+        {tabActiva.toLowerCase().includes('grupo') && (
+          <button 
+            onClick={calcularBonusGrupo}
+            style={{ padding: '8px 15px', background: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+          >
+            🎁 Calcular Bonus de {tabActiva}
+          </button>
+        )}
+      </div>
       {partidosDeLaFase.length === 0 ? (
         <p style={{ textAlign: 'center', padding: '30px', backgroundColor: '#f8f9fa', borderRadius: '8px', color: 'var(--text-muted)' }}>
           No hay partidos cargados en {tabActiva}.
