@@ -305,16 +305,17 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
 
 
 
-const TablaPosiciones = ({ partidos }) => {
+const calcularTabla = (partidos, obtenerGoles) => {
   const equipos = {};
 
   partidos.forEach(p => {
     if (!equipos[p.equipo_local]) equipos[p.equipo_local] = { nombre: p.equipo_local, pts: 0, pj: 0, pg: 0, pe: 0, pp: 0, gf: 0, gc: 0 };
     if (!equipos[p.equipo_visitante]) equipos[p.equipo_visitante] = { nombre: p.equipo_visitante, pts: 0, pj: 0, pg: 0, pe: 0, pp: 0, gf: 0, gc: 0 };
 
-    if (p.estado === 'finalizado' && p.resultado_real) {
-      const gl = p.resultado_real.goles_local;
-      const gv = p.resultado_real.goles_visitante;
+    const goles = obtenerGoles(p);
+    if (goles !== null) {
+      const gl = goles.local;
+      const gv = goles.visitante;
 
       equipos[p.equipo_local].pj++;
       equipos[p.equipo_visitante].pj++;
@@ -340,49 +341,70 @@ const TablaPosiciones = ({ partidos }) => {
     }
   });
 
-  const tabla = Object.values(equipos).sort((a, b) => {
+  return Object.values(equipos).sort((a, b) => {
     if (b.pts !== a.pts) return b.pts - a.pts;
     const difA = a.gf - a.gc;
     const difB = b.gf - b.gc;
     if (difB !== difA) return difB - difA;
     return b.gf - a.gf;
   });
+};
+
+const TablaPosiciones = ({ partidos, misPredicciones }) => {
+  const tablaReal = calcularTabla(partidos, (p) => {
+    if (p.estado === 'finalizado' && p.resultado_real) {
+      return { local: p.resultado_real.goles_local, visitante: p.resultado_real.goles_visitante };
+    }
+    return null;
+  });
+
+  const tablaPrediccion = calcularTabla(partidos, (p) => {
+    const pred = misPredicciones.find(pr => pr.partido_id === p._id);
+    if (pred) {
+      return { local: pred.prediccion_goles_local, visitante: pred.prediccion_goles_visitante };
+    }
+    return null;
+  });
+
+  const renderTabla = (tabla, titulo) => (
+    <div style={{ flex: 1, minWidth: '300px' }}>
+      <h4 style={{ textAlign: 'center', color: 'var(--text-main)', margin: '0 0 10px 0', fontSize: '14px' }}>{titulo}</h4>
+      <div style={{ border: '1px solid var(--card-border)', borderRadius: '8px', overflow: 'hidden' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'center', background: 'rgba(255,255,255,0.05)' }}>
+          <thead style={{ background: 'rgba(0,0,0,0.2)', borderBottom: '2px solid #ddd', fontSize: '11px', color: 'var(--text-muted)' }}>
+            <tr>
+              <th style={{ padding: '8px', textAlign: 'left' }}>Equipo</th>
+              <th style={{ padding: '8px' }}>Pts</th>
+              <th style={{ padding: '8px' }}>PJ</th>
+              <th style={{ padding: '8px' }}>GF</th>
+              <th style={{ padding: '8px' }}>GC</th>
+              <th style={{ padding: '8px' }}>DIF</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tabla.map((eq, index) => (
+              <tr key={eq.nombre} style={{ borderBottom: '1px solid var(--card-border)' }}>
+                <td style={{ padding: '8px', textAlign: 'left', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                  <span style={{ color: index < 2 ? '#28a745' : '#888', marginRight: '5px' }}>{index + 1}</span>
+                  {eq.nombre}
+                </td>
+                <td style={{ padding: '8px', fontWeight: 'bold', color: 'var(--primary-color)' }}>{eq.pts}</td>
+                <td style={{ padding: '8px' }}>{eq.pj}</td>
+                <td style={{ padding: '8px' }}>{eq.gf}</td>
+                <td style={{ padding: '8px' }}>{eq.gc}</td>
+                <td style={{ padding: '8px' }}>{eq.gf - eq.gc > 0 ? `+${eq.gf - eq.gc}` : eq.gf - eq.gc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 
   return (
-    <div style={{ marginBottom: '20px', border: '1px solid var(--card-border)', borderRadius: '8px', overflow: 'hidden' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'center', background: 'rgba(255,255,255,0.05)' }}>
-        <thead style={{ background: 'rgba(0,0,0,0.2)', borderBottom: '2px solid #ddd', fontSize: '12px', color: 'var(--text-muted)' }}>
-          <tr>
-            <th style={{ padding: '10px', textAlign: 'left' }}>Equipo</th>
-            <th style={{ padding: '10px' }}>Pts</th>
-            <th style={{ padding: '10px' }}>PJ</th>
-            <th style={{ padding: '10px' }}>G</th>
-            <th style={{ padding: '10px' }}>E</th>
-            <th style={{ padding: '10px' }}>P</th>
-            <th style={{ padding: '10px' }}>GF</th>
-            <th style={{ padding: '10px' }}>GC</th>
-            <th style={{ padding: '10px' }}>DIF</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tabla.map((eq, index) => (
-            <tr key={eq.nombre} style={{ borderBottom: '1px solid var(--card-border)' }}>
-              <td style={{ padding: '10px', textAlign: 'left', fontWeight: 'bold' }}>
-                <span style={{ color: index < 2 ? '#28a745' : '#888', marginRight: '8px' }}>{index + 1}</span>
-                {eq.nombre}
-              </td>
-              <td style={{ padding: '10px', fontWeight: 'bold', fontSize: '14px', color: 'var(--primary-color)' }}>{eq.pts}</td>
-              <td style={{ padding: '10px' }}>{eq.pj}</td>
-              <td style={{ padding: '10px' }}>{eq.pg}</td>
-              <td style={{ padding: '10px' }}>{eq.pe}</td>
-              <td style={{ padding: '10px' }}>{eq.pp}</td>
-              <td style={{ padding: '10px' }}>{eq.gf}</td>
-              <td style={{ padding: '10px' }}>{eq.gc}</td>
-              <td style={{ padding: '10px' }}>{eq.gf - eq.gc > 0 ? `+${eq.gf - eq.gc}` : eq.gf - eq.gc}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '20px' }}>
+      {renderTabla(tablaReal, "🏆 Clasificación Real")}
+      {renderTabla(tablaPrediccion, "🔮 Tu Simulación (Predicciones)")}
     </div>
   );
 };
@@ -407,7 +429,7 @@ const FaseCard = ({ fase, dataFase, misPredicciones, token }) => {
       {expandido && (
         <div style={{ marginTop: '15px' }}>
           {fase.toLowerCase().includes('grupo') && (
-            <TablaPosiciones partidos={dataFase.partidos} />
+            <TablaPosiciones partidos={dataFase.partidos} misPredicciones={misPredicciones} />
           )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {dataFase.partidos.map(partido => {
@@ -670,7 +692,7 @@ export default function Dashboard() {
             {Object.keys(fixtureAgrupado).length === 0 ? (
               <p style={{ textAlign: 'center' }}>No hay partidos cargados en el fixture.</p>
             ) : (
-              Object.keys(fixtureAgrupado).map(fase => (
+              Object.keys(fixtureAgrupado).sort().map(fase => (
                 <FaseCard key={fase} fase={fase} dataFase={fixtureAgrupado[fase]} misPredicciones={misPredicciones} token={token} />
               ))
             )}
