@@ -10,7 +10,8 @@ const partidoSchema = new mongoose.Schema({
   resultado_real: {
     goles_local: { type: Number, default: null },
     goles_visitante: { type: Number, default: null }
-  }
+  },
+  bonus_aplicado: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('Partido', partidoSchema);
