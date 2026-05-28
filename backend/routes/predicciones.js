@@ -14,14 +14,11 @@ router.post('/', auth, async (req, res) => {
     const partido = await Partido.findById(partido_id);
     if (!partido) return res.status(404).json({ mensaje: 'Partido no encontrado' });
 
-    const hoyObj = new Date();
-    const hoyStr = `${hoyObj.getUTCFullYear()}-${String(hoyObj.getUTCMonth() + 1).padStart(2, '0')}-${String(hoyObj.getUTCDate()).padStart(2, '0')}`;
-    
+    const ahora = new Date();
     const partidoObj = new Date(partido.fecha_hora);
-    const partidoStr = `${partidoObj.getUTCFullYear()}-${String(partidoObj.getUTCMonth() + 1).padStart(2, '0')}-${String(partidoObj.getUTCDate()).padStart(2, '0')}`;
 
-    if (hoyStr >= partidoStr) {
-      return res.status(403).json({ mensaje: 'Ya no puedes hacer predicciones para este partido. El tiempo expiró (cierra 1 día antes).' });
+    if (ahora >= partidoObj) {
+      return res.status(403).json({ mensaje: 'Ya no puedes hacer predicciones para este partido. El partido ya comenzó.' });
     }
 
     // Buscamos si el usuario ya había hecho una predicción para este partido

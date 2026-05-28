@@ -23,8 +23,7 @@ const ModalAyuda = ({ alCerrar }) => (
             <span>🗺️</span> Guía de Navegación
           </h3>
           <ul style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8', color: 'var(--text-muted)' }}>
-            <li><strong>📅 Hoy:</strong> Mirá los partidos que se juegan hoy y las predicciones que hiciste.</li>
-            <li><strong>🔜 Mañana:</strong> Acá vas a realizar las predicciones para los partidos del día siguiente.</li>
+            <li><strong>📅 Hoy:</strong> Mirá los partidos que se juegan hoy y realizá tus predicciones antes de que empiecen.</li>
             <li><strong>📋 Fixture:</strong> El panorama completo. Navegá por todos los grupos, mirá qué partidos faltan y dejá tus predicciones para cualquier fecha futura.</li>
           </ul>
         </div>
@@ -35,7 +34,7 @@ const ModalAyuda = ({ alCerrar }) => (
             <span>⏳</span> Reglas Clave
           </h3>
           <ul style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8', color: 'var(--text-muted)' }}>
-            <li>Las predicciones <strong>se cierran el mismo día del partido</strong>. Por eso siempre debes predecir en <strong>Mañana</strong> o <strong>Fixture</strong>.</li>
+            <li>Las predicciones <strong>se cierran en el momento exacto en que comienza el partido</strong>. Asegurate de hacerlas a tiempo.</li>
             <li>No es obligatorio predecir todos los partidos, pero si no lo hacés, ¡perdés la oportunidad de sumar puntos!</li>
             <li>Una vez finalizado un partido, el sistema actualizará el resultado real y repartirá los puntos correspondientes a todos.</li>
             <li>Está permitido registrar una IA propia o algún sistema de predicción que juegue por ustedes. Pueden desarrollar algo en grupo si desean. Si hacen algo así, pueden registrar el nombre finalizando con (IA) así es claro que no es un humano tomando decisiones.</li>
@@ -115,11 +114,9 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
 
   const finalizado = partido.estado === 'finalizado';
 
-  const hoyObj = new Date();
-  const hoyStr = `${hoyObj.getUTCFullYear()}-${String(hoyObj.getUTCMonth() + 1).padStart(2, '0')}-${String(hoyObj.getUTCDate()).padStart(2, '0')}`;
+  const ahora = new Date();
   const partidoObj = new Date(partido.fecha_hora);
-  const partidoStr = `${partidoObj.getUTCFullYear()}-${String(partidoObj.getUTCMonth() + 1).padStart(2, '0')}-${String(partidoObj.getUTCDate()).padStart(2, '0')}`;
-  const prediccionCerrada = hoyStr >= partidoStr;
+  const prediccionCerrada = finalizado || ahora >= partidoObj;
 
   const fechaFormateada = new Date(partido.fecha_hora).toLocaleString([], {
     day: '2-digit', month: '2-digit',
@@ -560,12 +557,7 @@ export default function Dashboard() {
   const fechaHoyObj = new Date();
   const stringHoy = `${fechaHoyObj.getUTCFullYear()}-${String(fechaHoyObj.getUTCMonth() + 1).padStart(2, '0')}-${String(fechaHoyObj.getUTCDate()).padStart(2, '0')}`;
 
-  const fechaMananaObj = new Date();
-  fechaMananaObj.setUTCDate(fechaMananaObj.getUTCDate() + 1);
-  const stringManana = `${fechaMananaObj.getUTCFullYear()}-${String(fechaMananaObj.getUTCMonth() + 1).padStart(2, '0')}-${String(fechaMananaObj.getUTCDate()).padStart(2, '0')}`;
-
   const partidosDeHoy = partidos.filter(partido => partido.fecha_hora && partido.fecha_hora.startsWith(stringHoy));
-  const partidosDeManana = partidos.filter(partido => partido.fecha_hora && partido.fecha_hora.startsWith(stringManana));
 
   const fixtureAgrupado = partidos.reduce((acc, partido) => {
     const fase = partido.grupo_o_fase;
@@ -637,12 +629,9 @@ export default function Dashboard() {
         {mostrarAyuda && <ModalAyuda alCerrar={cerrarAyuda} />}
 
         {/* NAVEGACIÓN DE PESTAÑAS (AGREGAMOS ESTADÍSTICAS) */}
-        <div style={{ display: 'flex', borderBottom: '1px solid var(--card-border)', marginBottom: '30px' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid #ddd', marginBottom: '20px' }}>
           <button style={tabStyle(tabActiva === 'hoy')} onClick={() => setTabActiva('hoy')}>
             📅 Hoy
-          </button>
-          <button style={tabStyle(tabActiva === 'manana')} onClick={() => setTabActiva('manana')}>
-            🔜 Mañana
           </button>
           <button style={tabStyle(tabActiva === 'fixture')} onClick={() => setTabActiva('fixture')}>
             📋 Fixture
@@ -669,21 +658,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* CONTENIDO DE LA PESTAÑA: MAÑANA */}
-        {tabActiva === 'manana' && (
-          <div>
-            {partidosDeManana.length === 0 ? (
-              <p className="glass-panel" style={{ textAlign: 'center', padding: '40px' }}>
-                No hay partidos programados para mañana.
-              </p>
-            ) : (
-              partidosDeManana.map(partido => {
-                const prediccionPrevia = misPredicciones.find(p => p.partido_id === partido._id);
-                return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} />;
-              })
-            )}
-          </div>
-        )}
+
 
         {/* CONTENIDO DE LA PESTAÑA: FIXTURE */}
         {tabActiva === 'fixture' && (
