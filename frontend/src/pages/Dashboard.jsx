@@ -23,7 +23,7 @@ const ModalAyuda = ({ alCerrar }) => (
             <span>🗺️</span> Guía de Navegación
           </h3>
           <ul style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8', color: 'var(--text-muted)' }}>
-            <li><strong>📅 Hoy:</strong> Mirá los partidos que se juegan hoy y realizá tus predicciones antes de que empiecen.</li>
+            <li><strong>📅 Hoy:</strong> Como hay partidos que se juegan en la madrugada. La jornada de "Hoy" es desde las 10AM de hoy hasta las 10AM de mañana. Así no te perdés de predecir partidos que arrancan muy temprano.</li>
             <li><strong>📋 Fixture:</strong> El panorama completo. Navegá por todos los grupos, mirá qué partidos faltan y dejá tus predicciones para cualquier fecha futura.</li>
           </ul>
         </div>
@@ -116,6 +116,7 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
 
   const ahora = new Date();
   const partidoObj = new Date(partido.fecha_hora);
+  partidoObj.setHours(partidoObj.getHours() + 3);
   const prediccionCerrada = finalizado || ahora >= partidoObj;
 
   const fechaFormateada = new Date(partido.fecha_hora).toLocaleString([], {
@@ -554,10 +555,26 @@ export default function Dashboard() {
 
   if (cargando) return <h2 style={{ textAlign: 'center', marginTop: '50px' }}>Cargando la cancha... ⚽</h2>;
 
-  const fechaHoyObj = new Date();
-  const stringHoy = `${fechaHoyObj.getUTCFullYear()}-${String(fechaHoyObj.getUTCMonth() + 1).padStart(2, '0')}-${String(fechaHoyObj.getUTCDate()).padStart(2, '0')}`;
+  const ahoraUtc = new Date();
 
-  const partidosDeHoy = partidos.filter(partido => partido.fecha_hora && partido.fecha_hora.startsWith(stringHoy));
+  // Una "Jornada de Prode" arranca a las 10:00 AM de Argentina (13:00 UTC)
+  let inicioVentana = new Date(ahoraUtc);
+  inicioVentana.setHours(inicioVentana.getHours() + 3);
+  if (inicioVentana.getHours() < 10) {
+    // Si todavía no son las 10:00 UTC, seguimos en la jornada del día anterior
+    inicioVentana.setUTCDate(inicioVentana.getUTCDate() - 1);
+  }
+  inicioVentana.setHours(10, 0, 0, 0);
+
+  // La jornada dura 24 horas exactas (hasta las 10:00 AM del día siguiente)
+  let finVentana = new Date(inicioVentana);
+  finVentana.setUTCDate(finVentana.getUTCDate() + 1);
+
+  const partidosDeHoy = partidos.filter(partido => {
+    if (!partido.fecha_hora) return false;
+    const fechaPartido = new Date(partido.fecha_hora);
+    return fechaPartido >= inicioVentana && fechaPartido < finVentana;
+  });
 
   const fixtureAgrupado = partidos.reduce((acc, partido) => {
     const fase = partido.grupo_o_fase;
