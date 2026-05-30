@@ -8,7 +8,8 @@ const ModalAyuda = ({ alCerrar }) => (
     backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
   }}>
     <div className="glass-panel" style={{
-      padding: '40px', maxWidth: '800px', width: '90%', maxHeight: '85vh', overflowY: 'auto'
+      padding: '40px', maxWidth: '800px', width: '90%', maxHeight: '85vh', overflowY: 'auto',
+      backgroundColor: '#0f172a', border: '1px solid var(--card-border)'
     }}>
       <h2 style={{ marginTop: 0, color: 'var(--primary-color)', textAlign: 'center', fontSize: '32px', marginBottom: '20px' }}>🏆 Cómo jugar al Prode Mundial</h2>
 
