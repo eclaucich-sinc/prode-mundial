@@ -7,6 +7,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -14,9 +15,11 @@ export default function Register() {
     e.preventDefault();
     setError('');
     setExito('');
+    setLoading(true);
 
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
+      setLoading(false);
       return;
     }
 
@@ -37,6 +40,8 @@ export default function Register() {
       }
     } catch (err) {
       setError('Error de conexión con el servidor.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,8 +78,9 @@ export default function Register() {
         <button
           type="submit"
           className="btn-primary"
-          style={{ padding: '12px', fontSize: '16px' }}>
-          Registrarme
+          disabled={loading}
+          style={{ padding: '12px', fontSize: '16px', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+          {loading ? 'Registrando... ⏳' : 'Registrarme'}
         </button>
       </form>
 

@@ -6,6 +6,7 @@ export default function Login() {
   const [nombre, setNombre] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Herramienta de React Router para cambiar de página
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Evita que la página se recargue al enviar el formulario
     setError(''); // Limpiamos errores previos
+    setLoading(true);
 
     try {
       // Le pegamos a nuestra API de Node.js
@@ -39,6 +41,8 @@ export default function Login() {
       }
     } catch (err) {
       setError('Error de conexión con el servidor. ¿Está prendido el backend?');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,8 +71,9 @@ export default function Login() {
         <button
           type="submit"
           className="btn-primary"
-          style={{ padding: '12px', fontSize: '16px' }}>
-          Entrar a Jugar
+          disabled={loading}
+          style={{ padding: '12px', fontSize: '16px', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+          {loading ? 'Entrando... ⏳' : 'Entrar a Jugar'}
         </button>
       </form>
 
