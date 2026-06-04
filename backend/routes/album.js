@@ -5,7 +5,7 @@ const Figurita = require('../models/Figurita');
 const auth = require('../middleware/auth');
 
 const PUNTOS_POR_FIGURITA = 20;
-const TOTAL_FIGURITAS = 20;
+const TOTAL_FIGURITAS = 6;
 
 // Obtener info del álbum del usuario logueado
 router.get('/mias', auth, async (req, res) => {
@@ -18,7 +18,7 @@ router.get('/mias', auth, async (req, res) => {
     // Fetch catalog of figuritas (avoiding mongo memory sort limit)
     const catalogoDocs = await Figurita.find({});
     catalogoDocs.sort((a, b) => a.numero - b.numero);
-    
+
     const catalogo = catalogoDocs.map(f => {
       return {
         numero: f.numero,

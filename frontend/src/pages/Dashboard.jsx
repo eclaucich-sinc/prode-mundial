@@ -839,47 +839,68 @@ export default function Dashboard() {
                   <div key={num} onClick={() => laTengo && toggleFlip(num)} style={{
                     aspectRatio: '3/4',
                     borderRadius: '8px',
-                    border: laTengo ? '2px solid var(--primary-color)' : '1px dashed var(--card-border)',
-                    background: laTengo ? 'rgba(250, 204, 21, 0.1)' : 'rgba(255,255,255,0.05)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: '10px',
-                    textAlign: 'center',
-                    position: 'relative',
+                    perspective: '1000px', // Standard for 3D flip
                     cursor: laTengo ? 'pointer' : 'default',
-                    overflow: 'hidden',
-                    transition: 'transform 0.6s',
-                    transformStyle: 'preserve-3d',
-                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
                   }}>
-                    {laTengo && infoCatalogo && (infoCatalogo.img_frente || infoCatalogo.img_dorso) ? (
-                      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
-                        <img
-                          src={isFlipped ? (infoCatalogo.img_dorso || infoCatalogo.img_frente) : (infoCatalogo.img_frente || infoCatalogo.img_dorso)}
-                          alt={`Figurita ${num}`}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }}
-                        />
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', backfaceVisibility: 'hidden', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
-                        <div style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>
-                          #{num}
-                        </div>
-                        {infoCatalogo && infoCatalogo.nombre && (
-                          <div style={{ fontSize: '12px', color: 'var(--primary-color)', margin: '5px 0' }}>{infoCatalogo.nombre}</div>
-                        )}
-                        {laTengo ? (
-                          <>
-                            <span style={{ fontSize: '40px' }}>😎</span>
-                            <span style={{ fontSize: '12px', marginTop: '10px', fontWeight: 'bold', color: 'var(--primary-color)' }}>¡Obtenida!</span>
-                          </>
+                    <div style={{
+                      width: '100%', height: '100%',
+                      position: 'relative',
+                      transition: 'transform 0.6s',
+                      transformStyle: 'preserve-3d',
+                      transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                    }}>
+                      
+                      {/* LADO DE ADELANTE */}
+                      <div style={{
+                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                        backfaceVisibility: 'hidden',
+                        borderRadius: '8px',
+                        border: laTengo ? '2px solid var(--primary-color)' : '1px dashed var(--card-border)',
+                        background: laTengo ? 'rgba(250, 204, 21, 0.1)' : 'rgba(255,255,255,0.05)',
+                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+                        overflow: 'hidden'
+                      }}>
+                        {laTengo && infoCatalogo && infoCatalogo.img_frente ? (
+                          <img src={infoCatalogo.img_frente} alt={`Frente ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
-                          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Falta</span>
+                          <>
+                            <div style={{ position: 'absolute', top: '5px', left: '5px', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>#{num}</div>
+                            {infoCatalogo && infoCatalogo.nombre && (
+                              <div style={{ fontSize: '12px', color: 'var(--primary-color)', margin: '5px 0', textAlign: 'center' }}>{infoCatalogo.nombre}</div>
+                            )}
+                            {laTengo ? (
+                              <>
+                                <span style={{ fontSize: '40px' }}>😎</span>
+                                <span style={{ fontSize: '12px', marginTop: '10px', fontWeight: 'bold', color: 'var(--primary-color)' }}>¡Obtenida!</span>
+                              </>
+                            ) : (
+                              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Falta</span>
+                            )}
+                          </>
                         )}
                       </div>
-                    )}
+
+                      {/* LADO DE ATRÁS */}
+                      <div style={{
+                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                        backfaceVisibility: 'hidden',
+                        borderRadius: '8px',
+                        border: '2px solid var(--primary-color)',
+                        background: 'rgba(250, 204, 21, 0.1)',
+                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+                        transform: 'rotateY(180deg)',
+                        overflow: 'hidden'
+                      }}>
+                        {laTengo && infoCatalogo && infoCatalogo.img_dorso ? (
+                          <img src={infoCatalogo.img_dorso} alt={`Dorso ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ textAlign: 'center', color: 'var(--text-main)' }}>
+                            <span style={{ fontSize: '30px' }}>🔙</span>
+                          </div>
+                        )}
+                      </div>
+
+                    </div>
                   </div>
                 );
               })}
