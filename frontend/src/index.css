@@ -199,3 +199,57 @@ input[type=number] {
   }
 }
 
+
+/* Responsive Match Cards */
+.comparativa-marcadores {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 10px;
+}
+
+.marcador-flecha {
+  font-size: 24px;
+}
+
+.equipo-nombre {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.contenedor-marcador {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+}
+
+@media (max-width: 768px) {
+  .comparativa-marcadores {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .marcador-flecha {
+    transform: rotate(90deg);
+  }
+  
+  .equipo-nombre {
+    max-width: 80px;
+  }
+  
+  .contenedor-marcador {
+    gap: 4px;
+  }
+  
+  .circulo-goles {
+    width: 25px !important;
+    height: 25px !important;
+    font-size: 14px !important;
+  }
+}
+

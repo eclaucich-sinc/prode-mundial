@@ -299,38 +299,38 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
           {finalizado ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               {/* Fila 1: Comparativa de Marcadores */}
-              <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', gap: '10px' }}>
+              <div className="comparativa-marcadores">
                 {/* Bloque Tu Predicción */}
-                <div style={{ textAlign: 'center', flex: 1, border: '1px dashed #ccc', padding: '10px', borderRadius: '5px' }}>
+                <div style={{ textAlign: 'center', flex: 1, border: '1px dashed #ccc', padding: '10px', borderRadius: '5px', width: '100%' }}>
                   <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '5px' }}>Tu Predicción</div>
-                  <div style={{ ...contenedorMarcadorStyle, backgroundColor: 'transparent', gap: '8px' }}>
-                    <span style={{ fontSize: '14px' }}>{partido.equipo_local}</span>
-                    <span style={{ ...circuloGolesStyle, background: 'var(--text-muted)', fontSize: '16px', width: '30px', height: '30px' }}>
+                  <div className="contenedor-marcador">
+                    <span className="equipo-nombre">{partido.equipo_local}</span>
+                    <span className="circulo-goles" style={{ ...circuloGolesStyle, background: 'var(--text-muted)', fontSize: '16px', width: '30px', height: '30px' }}>
                       {prediccionPrevia ? prediccionPrevia.prediccion_goles_local : '-'}
                     </span>
                     <span style={{ fontWeight: 'bold' }}>-</span>
-                    <span style={{ ...circuloGolesStyle, background: 'var(--text-muted)', fontSize: '16px', width: '30px', height: '30px' }}>
+                    <span className="circulo-goles" style={{ ...circuloGolesStyle, background: 'var(--text-muted)', fontSize: '16px', width: '30px', height: '30px' }}>
                       {prediccionPrevia ? prediccionPrevia.prediccion_goles_visitante : '-'}
                     </span>
-                    <span style={{ fontSize: '14px' }}>{partido.equipo_visitante}</span>
+                    <span className="equipo-nombre">{partido.equipo_visitante}</span>
                   </div>
                 </div>
 
-                <div style={{ fontSize: '24px' }}>👉</div>
+                <div className="marcador-flecha">👉</div>
 
                 {/* Bloque Resultado Real */}
-                <div style={{ textAlign: 'center', flex: 1, border: '2px solid var(--success-color)', padding: '10px', borderRadius: '5px', background: 'rgba(255,255,255,0.05)' }}>
+                <div style={{ textAlign: 'center', flex: 1, border: '2px solid var(--success-color)', padding: '10px', borderRadius: '5px', background: 'rgba(255,255,255,0.05)', width: '100%' }}>
                   <div style={{ fontSize: '12px', color: 'var(--success-color)', fontWeight: 'bold', marginBottom: '5px' }}>Resultado Real</div>
-                  <div style={{ ...contenedorMarcadorStyle, backgroundColor: 'transparent', gap: '8px' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{partido.equipo_local}</span>
-                    <span style={circuloGolesStyle}>
+                  <div className="contenedor-marcador">
+                    <span className="equipo-nombre" style={{ fontWeight: 'bold' }}>{partido.equipo_local}</span>
+                    <span className="circulo-goles" style={circuloGolesStyle}>
                       {partido.resultado_real.goles_local}
                     </span>
                     <span style={{ fontWeight: 'bold', fontSize: '20px' }}>-</span>
-                    <span style={circuloGolesStyle}>
+                    <span className="circulo-goles" style={circuloGolesStyle}>
                       {partido.resultado_real.goles_visitante}
                     </span>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{partido.equipo_visitante}</span>
+                    <span className="equipo-nombre" style={{ fontWeight: 'bold' }}>{partido.equipo_visitante}</span>
                   </div>
                 </div>
               </div>
@@ -340,8 +340,8 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
             /* --- DISEÑO SI EL PARTIDO ESTÁ PENDIENTE --- */
             <>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', alignItems: 'center', marginBottom: '15px' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>{partido.equipo_local}</label>
+                <div style={{ textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <label className="equipo-nombre" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>{partido.equipo_local}</label>
                   <input
                     type="number" min="0" value={golesLocal}
                     onChange={(e) => setGolesLocal(e.target.value)}
@@ -350,8 +350,8 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
                   />
                 </div>
                 <span style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '20px' }}>-</span>
-                <div style={{ textAlign: 'center' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>{partido.equipo_visitante}</label>
+                <div style={{ textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <label className="equipo-nombre" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>{partido.equipo_visitante}</label>
                   <input
                     type="number" min="0" value={golesVisitante}
                     onChange={(e) => setGolesVisitante(e.target.value)}
