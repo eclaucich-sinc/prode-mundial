@@ -117,7 +117,7 @@ const ModalAyudaQ21 = ({ alCerrar }) => (
       <h2 style={{ marginTop: 0, color: 'var(--primary-color)', textAlign: 'center', fontSize: '32px', marginBottom: '20px' }}>🏆 Cómo jugar al Prode Mundial</h2>
 
       <p style={{ textAlign: 'center', fontSize: '16px', color: 'var(--text-main)', marginBottom: '30px' }}>
-        El objetivo es simple: <strong>acertar la mayor cantidad de resultados</strong> de los partidos del mundial para sumar puntos y levantar la copa del sinc(i).
+        El objetivo es simple: <strong>acertar la mayor cantidad de resultados</strong> de los partidos del mundial para sumar puntos y levantar la copa de Q21.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '30px' }}>
@@ -780,8 +780,8 @@ export default function Dashboard() {
         </div>
         {mostrarAyuda && (
           clientName === 'sinc(i)' ? <ModalAyudaSinc alCerrar={cerrarAyuda} /> :
-          clientName === 'Q21' ? <ModalAyudaQ21 alCerrar={cerrarAyuda} /> :
-          <ModalAyudaSinc alCerrar={cerrarAyuda} /> // Fallback por defecto
+            clientName === 'Q21' ? <ModalAyudaQ21 alCerrar={cerrarAyuda} /> :
+              <ModalAyudaSinc alCerrar={cerrarAyuda} /> // Fallback por defecto
         )}
 
         {/* NAVEGACIÓN DE PESTAÑAS (AGREGAMOS ESTADÍSTICAS) */}
@@ -799,7 +799,7 @@ export default function Dashboard() {
 
           {clientName === 'sinc(i)' && (
             <button style={tabStyle(tabActiva === 'album')} onClick={() => setTabActiva('album')}>
-              📔 Álbum
+              📔 Álbum (próximamente...)
             </button>
           )}
         </div>
