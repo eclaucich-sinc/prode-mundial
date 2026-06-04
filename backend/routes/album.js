@@ -15,8 +15,10 @@ router.get('/mias', auth, async (req, res) => {
 
     const puntosDisponibles = (usuario.puntos_totales || 0) - (usuario.puntos_gastados || 0);
 
-    // Fetch catalog of figuritas
-    const catalogoDocs = await Figurita.find({}).sort({ numero: 1 });
+    // Fetch catalog of figuritas (avoiding mongo memory sort limit)
+    const catalogoDocs = await Figurita.find({});
+    catalogoDocs.sort((a, b) => a.numero - b.numero);
+    
     const catalogo = catalogoDocs.map(f => {
       return {
         numero: f.numero,
@@ -33,6 +35,7 @@ router.get('/mias', auth, async (req, res) => {
       catalogo
     });
   } catch (error) {
+    console.error("ERROR EN /mias:", error);
     res.status(500).json({ mensaje: 'Error al obtener el álbum' });
   }
 });
