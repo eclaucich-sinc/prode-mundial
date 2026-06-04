@@ -667,7 +667,15 @@ export default function Dashboard() {
     navigate('/login');
   };
 
-  if (cargando) return <h2 style={{ textAlign: 'center', marginTop: '50px' }}>Cargando la cancha... ⚽</h2>;
+  if (cargando) return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', width: '100%' }}>
+      <div className="glass-panel" style={{ padding: '40px 60px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', textAlign: 'center' }}>
+        <div className="soccer-spinner" style={{ fontSize: '60px' }}>⚽</div>
+        <h2 className="loading-text" style={{ color: 'var(--primary-color)', margin: 0, fontSize: '24px' }}>Cargando la cancha...</h2>
+        <p className="loading-text" style={{ color: 'var(--text-muted)', margin: 0, fontSize: '14px' }}>El servidor está en la charla técnica, <br /> por favor esperá unos segundos.</p>
+      </div>
+    </div>
+  );
 
   const ahoraUtc = new Date();
 
