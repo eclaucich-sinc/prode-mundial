@@ -826,7 +826,7 @@ export default function Dashboard() {
               gap: '15px',
               marginTop: '20px'
             }}>
-              {Array.from({ length: 20 }, (_, i) => i + 1).map(num => {
+              {Array.from({ length: 6 }, (_, i) => i + 1).map(num => {
                 const laTengo = albumInfo.figuritas.includes(num);
                 const infoCatalogo = albumInfo.catalogo?.find(f => f.numero === num);
                 const isFlipped = flippedStickers[num];
@@ -852,9 +852,9 @@ export default function Dashboard() {
                   }}>
                     {laTengo && infoCatalogo && (infoCatalogo.img_frente || infoCatalogo.img_dorso) ? (
                       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
-                        <img 
-                          src={isFlipped ? (infoCatalogo.img_dorso || infoCatalogo.img_frente) : (infoCatalogo.img_frente || infoCatalogo.img_dorso)} 
-                          alt={`Figurita ${num}`} 
+                        <img
+                          src={isFlipped ? (infoCatalogo.img_dorso || infoCatalogo.img_frente) : (infoCatalogo.img_frente || infoCatalogo.img_dorso)}
+                          alt={`Figurita ${num}`}
                           style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }}
                         />
                       </div>
