@@ -698,8 +698,8 @@ export default function Dashboard() {
           </button>
 
           {rolUsuario === 'admin' && (
-            <button style={tabStyle(tabActiva === 'album')} onClick={() => setTabActiva('album')}>
-              📔 Álbum
+            <button disabled={true} style={tabStyle(tabActiva === 'album')} onClick={() => setTabActiva('album')}>
+              📔 Álbum (próximamente...)
             </button>
           )}
         </div>
@@ -849,7 +849,7 @@ export default function Dashboard() {
                       transformStyle: 'preserve-3d',
                       transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
                     }}>
-                      
+
                       {/* LADO DE ADELANTE */}
                       <div style={{
                         position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
