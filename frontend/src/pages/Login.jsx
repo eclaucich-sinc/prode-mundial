@@ -65,7 +65,7 @@ export default function Login() {
   };
 
   return (
-    <div className="glass-panel" style={{ maxWidth: '400px', margin: '100px auto', padding: '40px', textAlign: 'center' }}>
+    <div className="glass-panel" style={{ width: '90%', maxWidth: '400px', margin: '5vh auto', padding: '30px 20px', textAlign: 'center' }}>
       <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>🏆 Prode Mundial 2026 <br /> {clientName}</h1>
       <p style={{ color: 'var(--text-muted)' }}>Iniciá sesión para hacer tus pronósticos</p>
 

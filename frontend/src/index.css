@@ -128,3 +128,74 @@ input[type=number] {
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+/* Responsive Layout */
+.dashboard-container {
+  display: flex;
+  gap: 30px;
+  min-height: 100vh;
+}
+
+.sidebar {
+  flex: 0 0 300px;
+  padding: 30px;
+  border-right: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  border-radius: 0 0 10px 0;
+}
+
+.main-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .sidebar {
+    flex: none;
+    width: 100%;
+    padding: 15px;
+    border-right: none;
+    border-radius: 0;
+    max-height: 350px;
+    overflow-y: auto;
+  }
+  
+  .main-content {
+    padding: 15px;
+  }
+  
+  .header-top {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .header-buttons {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .header-buttons button {
+    flex: 1;
+  }
+}
+

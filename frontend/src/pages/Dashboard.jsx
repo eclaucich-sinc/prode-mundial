@@ -738,10 +738,10 @@ export default function Dashboard() {
   });
 
   return (
-    <div style={{ display: 'flex', gap: '30px', minHeight: '100vh' }}>
+    <div className="dashboard-container">
 
       {/* --- COLUMNA 1: EL RANKING (FIJA A LA IZQUIERDA) --- */}
-      <div className="glass-panel" style={{ flex: '0 0 300px', padding: '30px', borderRight: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', borderRadius: '0 0 10px 0' }}>
+      <div className="glass-panel sidebar">
         <h3 style={{ margin: '0 0 20px 0', textAlign: 'center', color: 'var(--primary-color)' }}>📊 Tabla de Posiciones</h3>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
           <thead>
@@ -766,11 +766,11 @@ export default function Dashboard() {
       </div>
 
       {/* --- COLUMNA 2: EL CONTENIDO PRINCIPAL --- */}
-      <div style={{ flex: 1, padding: '30px', overflowY: 'auto' }}>
+      <div className="main-content">
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingBottom: '20px', borderBottom: '2px solid #ddd' }}>
+        <div className="header-top">
           <h1 style={{ margin: 0, fontSize: '28px', color: 'var(--text-main)' }}>🏆 Hola, {nombreUsuario}</h1>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="header-buttons">
             <button onClick={() => setMostrarAyuda(true)} style={{ padding: '10px 20px', background: 'var(--success-color)', color: 'var(--text-main)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}>❔ Ayuda</button>
             {rolUsuario === 'admin' && (
               <button onClick={() => navigate('/admin')} style={{ padding: '10px 20px', background: 'var(--text-muted)', color: 'var(--text-main)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px' }}>⚙️ Admin</button>
