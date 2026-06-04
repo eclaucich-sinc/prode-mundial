@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const ModalAyuda = ({ alCerrar }) => (
+const ModalAyudaSinc = ({ alCerrar }) => (
   <div style={{
     position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
     backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
@@ -89,6 +89,95 @@ const ModalAyuda = ({ alCerrar }) => (
           <p style={{ margin: 0, color: 'var(--text-main)', lineHeight: '1.6', fontWeight: 'bold' }}>
             🎁 Habrá premios para el podio al finalizar el mundial... ¡A menos que gane una IA, en ese caso no nos merecemos ganar nada!
           </p>
+        </div>
+      </div>
+
+      <div style={{ textAlign: 'center', marginTop: '40px' }}>
+        <button
+          onClick={alCerrar}
+          className="btn-primary"
+          style={{ padding: '15px 40px', fontSize: '18px', borderRadius: '30px' }}
+        >
+          ¡Entendido, a jugar!
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const ModalAyudaQ21 = ({ alCerrar }) => (
+  <div style={{
+    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+  }}>
+    <div className="glass-panel" style={{
+      padding: '40px', maxWidth: '800px', width: '90%', maxHeight: '85vh', overflowY: 'auto',
+      backgroundColor: '#0f172a', border: '1px solid var(--card-border)'
+    }}>
+      <h2 style={{ marginTop: 0, color: 'var(--primary-color)', textAlign: 'center', fontSize: '32px', marginBottom: '20px' }}>🏆 Cómo jugar al Prode Mundial</h2>
+
+      <p style={{ textAlign: 'center', fontSize: '16px', color: 'var(--text-main)', marginBottom: '30px' }}>
+        El objetivo es simple: <strong>acertar la mayor cantidad de resultados</strong> de los partidos del mundial para sumar puntos y levantar la copa del sinc(i).
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '30px' }}>
+        {/* Section: Navegación */}
+        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '10px', border: '1px solid var(--card-border)' }}>
+          <h3 style={{ color: 'var(--primary-color)', margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>🗺️</span> Guía de Navegación
+          </h3>
+          <ul style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8', color: 'var(--text-muted)' }}>
+            <li><strong>📅 Hoy:</strong> Como hay partidos que se juegan en la madrugada. La jornada de "Hoy" es desde las 10AM de hoy hasta las 10AM de mañana. Así no te perdés de predecir partidos que arrancan muy temprano.</li>
+            <li><strong>📋 Fixture:</strong> El panorama completo. Navegá por todos los grupos, mirá qué partidos faltan y dejá tus predicciones para cualquier fecha futura.</li>
+          </ul>
+        </div>
+
+        {/* Section: Reglas de Predicción */}
+        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '10px', border: '1px solid var(--card-border)' }}>
+          <h3 style={{ color: '#3b82f6', margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>⏳</span> Reglas Clave
+          </h3>
+          <ul style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8', color: 'var(--text-muted)' }}>
+            <li>Las predicciones <strong>se cierran en el momento exacto en que comienza el partido</strong>. Asegurate de hacerlas a tiempo.</li>
+            <li>No es obligatorio predecir todos los partidos, pero si no lo hacés, ¡perdés la oportunidad de sumar puntos!</li>
+            <li>Una vez finalizado un partido, el sistema actualizará el resultado real y repartirá los puntos correspondientes a todos.</li>
+          </ul>
+        </div>
+
+        {/* Section: Puntuación */}
+        <div style={{ background: 'rgba(34, 197, 94, 0.1)', padding: '20px', borderRadius: '10px', border: '1px solid rgba(34,197,94,0.3)' }}>
+          <h3 style={{ color: 'var(--success-color)', margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>⚽</span> Sistema de Puntuación
+          </h3>
+          <div style={{ display: 'flex', gap: '15px', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ background: 'var(--success-color)', color: '#0f172a', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+3 Pts</span>
+              <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Acertar la TENDENCIA:</strong> Adivinar quién gana o si hay empate. (Ej: decís 2-1 y termina 1-0).</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ background: 'var(--primary-color)', color: '#0f172a', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+5 Pts</span>
+              <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Acertar el resultado EXACTO:</strong> Dar en el clavo con los goles. (Ej: decís 2-1 y termina 2-1).</span>
+            </div>
+
+            <h4 style={{ color: 'var(--text-main)', margin: '10px 0 0 0', borderBottom: '1px solid var(--card-border)', paddingBottom: '5px' }}>🎁 Bonus de Fase de Grupos (Al finalizar cada grupo)</h4>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ background: '#8b5cf6', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+5 Pts</span>
+              <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Clasificados (Desordenados):</strong> Acertar los 2 equipos que pasan a la siguiente ronda, pero en el orden incorrecto.</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ background: '#8b5cf6', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+10 Pts</span>
+              <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Clasificados (Exactos):</strong> Acertar los 2 equipos que pasan a la siguiente ronda en el orden exacto (1ro y 2do).</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ background: '#ec4899', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+20 Pts</span>
+              <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Gurú de Tendencias:</strong> Acertar la TENDENCIA (quién gana o empate) de TODOS los partidos de un grupo.</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span style={{ background: '#ec4899', color: 'white', padding: '4px 10px', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', minWidth: '70px', textAlign: 'center' }}>+40 Pts</span>
+              <span style={{ color: 'var(--text-main)', lineHeight: '1.4' }}><strong>Perfección de Grupo:</strong> Acertar el RESULTADO EXACTO de TODOS los partidos de un grupo.</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -689,7 +778,11 @@ export default function Dashboard() {
             <button onClick={cerrarSesion} style={{ padding: '10px 20px', background: 'var(--danger-color)', color: 'var(--text-main)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px' }}>Salir</button>
           </div>
         </div>
-        {mostrarAyuda && <ModalAyuda alCerrar={cerrarAyuda} />}
+        {mostrarAyuda && (
+          clientName === 'sinc(i)' ? <ModalAyudaSinc alCerrar={cerrarAyuda} /> :
+          clientName === 'Q21' ? <ModalAyudaQ21 alCerrar={cerrarAyuda} /> :
+          <ModalAyudaSinc alCerrar={cerrarAyuda} /> // Fallback por defecto
+        )}
 
         {/* NAVEGACIÓN DE PESTAÑAS (AGREGAMOS ESTADÍSTICAS) */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', borderBottom: '1px solid #ddd', marginBottom: '20px' }}>
