@@ -8,6 +8,7 @@ const partidosRoutes = require('./routes/partidos');         // NUEVO
 const prediccionesRoutes = require('./routes/predicciones'); // NUEVO
 const adminRoutes = require('./routes/admin'); // NUEVO: Importamos las rutas de admin
 const usuariosRoutes = require('./routes/usuarios'); // NUEVO
+const albumRoutes = require('./routes/album'); // NUEVO
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api/partidos', partidosRoutes);         // NUEVO
 app.use('/api/predicciones', prediccionesRoutes); // NUEVO
 app.use('/api/admin', adminRoutes); // NUEVO: Activamos la ruta admin
 app.use('/api/usuarios', usuariosRoutes); // NUEVO
+app.use('/api/album', albumRoutes); // NUEVO
 
 app.get('/', (req, res) => {
   res.send('El servidor del Prode Mundial está funcionando 🏆');

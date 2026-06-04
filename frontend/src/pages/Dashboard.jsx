@@ -451,6 +451,8 @@ export default function Dashboard() {
   const [ranking, setRanking] = useState([]);
   const [datosGrafico, setDatosGrafico] = useState({ data: [], usuarios: [] }); // NUEVO estado para el gráfico
   const [lineasOcultas, setLineasOcultas] = useState({}); // Para ocultar usuarios en el gráfico
+  const [albumInfo, setAlbumInfo] = useState({ puntosDisponibles: 0, figuritas: [] });
+  const [comprandoFigurita, setComprandoFigurita] = useState(false);
 
   const toggleLinea = (usuario) => {
     setLineasOcultas(prev => ({ ...prev, [usuario]: !prev[usuario] }));
@@ -500,6 +502,11 @@ export default function Dashboard() {
         const resHistorial = await fetch('https://prode-mundial-t3nt.onrender.com/api/usuarios/historial');
         const dataHistorial = await resHistorial.json();
 
+        const resAlbum = await fetch('https://prode-mundial-t3nt.onrender.com/api/album/mias', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const dataAlbum = await resAlbum.json();
+
         // --- LÓGICA MÁGICA: Transformar datos crudos a líneas acumulativas por día ---
         const fechasSet = new Set();
         dataHistorial.forEach(item => {
@@ -538,6 +545,7 @@ export default function Dashboard() {
         setPartidos(dataPartidos);
         setMisPredicciones(dataPredicciones);
         setRanking(dataRanking);
+        setAlbumInfo(dataAlbum);
       } catch (error) {
         console.error('Error al cargar datos:', error);
       } finally {
@@ -588,6 +596,27 @@ export default function Dashboard() {
     }
     return acc;
   }, {});
+
+  const comprarFigurita = async () => {
+    setComprandoFigurita(true);
+    try {
+      const res = await fetch('https://prode-mundial-t3nt.onrender.com/api/album/comprar', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.mensaje);
+        setAlbumInfo({ puntosDisponibles: data.puntosDisponibles, figuritas: data.figuritas });
+      } else {
+        alert(`❌ Error: ${data.mensaje}`);
+      }
+    } catch (err) {
+      alert('Error de conexión');
+    } finally {
+      setComprandoFigurita(false);
+    }
+  };
 
 
 
@@ -658,6 +687,12 @@ export default function Dashboard() {
           <button style={tabStyle(tabActiva === 'estadisticas')} onClick={() => setTabActiva('estadisticas')}>
             📈 Estadísticas
           </button>
+
+          {rolUsuario === 'admin' && (
+            <button style={tabStyle(tabActiva === 'album')} onClick={() => setTabActiva('album')}>
+              📔 Álbum
+            </button>
+          )}
         </div>
 
         {/* CONTENIDO DE LA PESTAÑA: HOY */}
@@ -751,6 +786,72 @@ export default function Dashboard() {
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {/* PESTAÑA: ÁLBUM */}
+        {tabActiva === 'album' && (
+          <div className="glass-panel" style={{ padding: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
+              <div>
+                <h3 style={{ margin: 0, color: 'var(--primary-color)' }}>📔 Tu Álbum de Figuritas</h3>
+                <p style={{ margin: '5px 0 0 0', color: 'var(--text-muted)' }}>Puntos disponibles: <strong>{albumInfo.puntosDisponibles} pts</strong></p>
+              </div>
+              <button 
+                onClick={comprarFigurita} 
+                disabled={comprandoFigurita || albumInfo.puntosDisponibles < 20}
+                style={{ 
+                  padding: '10px 20px', 
+                  background: albumInfo.puntosDisponibles >= 20 ? 'var(--primary-color)' : 'var(--text-muted)', 
+                  color: '#0f172a', 
+                  border: 'none', 
+                  borderRadius: '5px', 
+                  fontWeight: 'bold', 
+                  cursor: albumInfo.puntosDisponibles >= 20 ? 'pointer' : 'not-allowed',
+                  opacity: comprandoFigurita ? 0.7 : 1
+                }}
+              >
+                {comprandoFigurita ? 'Comprando... ⏳' : 'Comprar Figurita (20 pts)'}
+              </button>
+            </div>
+
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', 
+              gap: '15px', 
+              marginTop: '20px' 
+            }}>
+              {Array.from({ length: 20 }, (_, i) => i + 1).map(num => {
+                const laTengo = albumInfo.figuritas.includes(num);
+                return (
+                  <div key={num} style={{
+                    aspectRatio: '3/4',
+                    borderRadius: '8px',
+                    border: laTengo ? '2px solid var(--primary-color)' : '1px dashed var(--card-border)',
+                    background: laTengo ? 'rgba(250, 204, 21, 0.1)' : 'rgba(255,255,255,0.05)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '10px',
+                    textAlign: 'center',
+                    position: 'relative'
+                  }}>
+                    <div style={{ position: 'absolute', top: '5px', left: '5px', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>
+                      #{num}
+                    </div>
+                    {laTengo ? (
+                      <>
+                        <span style={{ fontSize: '40px' }}>😎</span>
+                        <span style={{ fontSize: '12px', marginTop: '10px', fontWeight: 'bold', color: 'var(--primary-color)' }}>¡Obtenida!</span>
+                      </>
+                    ) : (
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Falta</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
