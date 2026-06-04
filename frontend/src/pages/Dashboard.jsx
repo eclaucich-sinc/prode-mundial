@@ -550,7 +550,11 @@ export default function Dashboard() {
         setPartidos(dataPartidos);
         setMisPredicciones(dataPredicciones);
         setRanking(dataRanking);
-        setAlbumInfo(dataAlbum);
+        if (resAlbum.ok) {
+          setAlbumInfo(dataAlbum);
+        } else {
+          console.error("Error from album endpoint:", dataAlbum);
+        }
       } catch (error) {
         console.error('Error al cargar datos:', error);
       } finally {
@@ -827,7 +831,7 @@ export default function Dashboard() {
               marginTop: '20px'
             }}>
               {Array.from({ length: 6 }, (_, i) => i + 1).map(num => {
-                const laTengo = albumInfo.figuritas.includes(num);
+                const laTengo = (albumInfo.figuritas || []).includes(num);
                 const infoCatalogo = albumInfo.catalogo?.find(f => f.numero === num);
                 const isFlipped = flippedStickers[num];
 
