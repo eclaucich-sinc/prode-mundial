@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/Usuario');
+const Figurita = require('../models/Figurita');
 const auth = require('../middleware/auth');
 
 const PUNTOS_POR_FIGURITA = 20;
@@ -14,9 +15,22 @@ router.get('/mias', auth, async (req, res) => {
 
     const puntosDisponibles = (usuario.puntos_totales || 0) - (usuario.puntos_gastados || 0);
 
+    // Fetch catalog of figuritas
+    const catalogoDocs = await Figurita.find({}).sort({ numero: 1 });
+    const catalogo = catalogoDocs.map(f => {
+      return {
+        numero: f.numero,
+        nombre: f.nombre,
+        // Convert binary buffer to base64 if exists
+        img_frente: f.img_frente ? `data:image/png;base64,${f.img_frente.toString('base64')}` : null,
+        img_dorso: f.img_dorso ? `data:image/png;base64,${f.img_dorso.toString('base64')}` : null
+      };
+    });
+
     res.json({
       puntosDisponibles,
-      figuritas: usuario.figuritas || []
+      figuritas: usuario.figuritas || [],
+      catalogo
     });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener el álbum' });

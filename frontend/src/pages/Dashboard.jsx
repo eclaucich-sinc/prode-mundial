@@ -451,8 +451,13 @@ export default function Dashboard() {
   const [ranking, setRanking] = useState([]);
   const [datosGrafico, setDatosGrafico] = useState({ data: [], usuarios: [] }); // NUEVO estado para el gráfico
   const [lineasOcultas, setLineasOcultas] = useState({}); // Para ocultar usuarios en el gráfico
-  const [albumInfo, setAlbumInfo] = useState({ puntosDisponibles: 0, figuritas: [] });
+  const [albumInfo, setAlbumInfo] = useState({ puntosDisponibles: 0, figuritas: [], catalogo: [] });
   const [comprandoFigurita, setComprandoFigurita] = useState(false);
+  const [flippedStickers, setFlippedStickers] = useState({});
+
+  const toggleFlip = (num) => {
+    setFlippedStickers(prev => ({ ...prev, [num]: !prev[num] }));
+  };
 
   const toggleLinea = (usuario) => {
     setLineasOcultas(prev => ({ ...prev, [usuario]: !prev[usuario] }));
@@ -607,7 +612,7 @@ export default function Dashboard() {
       const data = await res.json();
       if (res.ok) {
         alert(data.mensaje);
-        setAlbumInfo({ puntosDisponibles: data.puntosDisponibles, figuritas: data.figuritas });
+        setAlbumInfo(prev => ({ ...prev, puntosDisponibles: data.puntosDisponibles, figuritas: data.figuritas }));
       } else {
         alert(`❌ Error: ${data.mensaje}`);
       }
@@ -799,15 +804,15 @@ export default function Dashboard() {
               </div>
               <button
                 onClick={comprarFigurita}
-                disabled={comprandoFigurita || albumInfo.puntosDisponibles < 0}
+                disabled={comprandoFigurita || albumInfo.puntosDisponibles < 20}
                 style={{
                   padding: '10px 20px',
-                  background: albumInfo.puntosDisponibles >= 0 ? 'var(--primary-color)' : 'var(--text-muted)',
+                  background: albumInfo.puntosDisponibles >= 20 ? 'var(--primary-color)' : 'var(--text-muted)',
                   color: '#0f172a',
                   border: 'none',
                   borderRadius: '5px',
                   fontWeight: 'bold',
-                  cursor: albumInfo.puntosDisponibles >= 0 ? 'pointer' : 'not-allowed',
+                  cursor: albumInfo.puntosDisponibles >= 20 ? 'pointer' : 'not-allowed',
                   opacity: comprandoFigurita ? 0.7 : 1
                 }}
               >
@@ -823,8 +828,11 @@ export default function Dashboard() {
             }}>
               {Array.from({ length: 20 }, (_, i) => i + 1).map(num => {
                 const laTengo = albumInfo.figuritas.includes(num);
+                const infoCatalogo = albumInfo.catalogo?.find(f => f.numero === num);
+                const isFlipped = flippedStickers[num];
+
                 return (
-                  <div key={num} style={{
+                  <div key={num} onClick={() => laTengo && toggleFlip(num)} style={{
                     aspectRatio: '3/4',
                     borderRadius: '8px',
                     border: laTengo ? '2px solid var(--primary-color)' : '1px dashed var(--card-border)',
@@ -835,18 +843,38 @@ export default function Dashboard() {
                     alignItems: 'center',
                     padding: '10px',
                     textAlign: 'center',
-                    position: 'relative'
+                    position: 'relative',
+                    cursor: laTengo ? 'pointer' : 'default',
+                    overflow: 'hidden',
+                    transition: 'transform 0.6s',
+                    transformStyle: 'preserve-3d',
+                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
                   }}>
-                    <div style={{ position: 'absolute', top: '5px', left: '5px', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>
-                      #{num}
-                    </div>
-                    {laTengo ? (
-                      <>
-                        <span style={{ fontSize: '40px' }}>😎</span>
-                        <span style={{ fontSize: '12px', marginTop: '10px', fontWeight: 'bold', color: 'var(--primary-color)' }}>¡Obtenida!</span>
-                      </>
+                    {laTengo && infoCatalogo && (infoCatalogo.img_frente || infoCatalogo.img_dorso) ? (
+                      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
+                        <img 
+                          src={isFlipped ? (infoCatalogo.img_dorso || infoCatalogo.img_frente) : (infoCatalogo.img_frente || infoCatalogo.img_dorso)} 
+                          alt={`Figurita ${num}`} 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }}
+                        />
+                      </div>
                     ) : (
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Falta</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', backfaceVisibility: 'hidden', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>
+                          #{num}
+                        </div>
+                        {infoCatalogo && infoCatalogo.nombre && (
+                          <div style={{ fontSize: '12px', color: 'var(--primary-color)', margin: '5px 0' }}>{infoCatalogo.nombre}</div>
+                        )}
+                        {laTengo ? (
+                          <>
+                            <span style={{ fontSize: '40px' }}>😎</span>
+                            <span style={{ fontSize: '12px', marginTop: '10px', fontWeight: 'bold', color: 'var(--primary-color)' }}>¡Obtenida!</span>
+                          </>
+                        ) : (
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Falta</span>
+                        )}
+                      </div>
                     )}
                   </div>
                 );
