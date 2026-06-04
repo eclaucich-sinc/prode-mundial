@@ -22,7 +22,7 @@ const PartidoAdminCard = ({ partido, token }) => {
     setEstadoCarga('⏳ Calculando...');
 
     try {
-      const res = await fetch(`https://prode-mundial-t3nt.onrender.com/api/admin/resultado/${partido._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/admin/resultado/${partido._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ export default function Admin() {
 
     const cargarPartidos = async () => {
       try {
-        const res = await fetch('https://prode-mundial-t3nt.onrender.com/api/partidos');
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/partidos`);
         const data = await res.json();
         setPartidos(data);
       } catch (error) {
@@ -181,7 +181,7 @@ export default function Admin() {
     }
 
     try {
-      const res = await fetch('https://prode-mundial-t3nt.onrender.com/api/partidos', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/partidos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ export default function Admin() {
     if (!window.confirm(`¿Confirmás calcular el bonus para ${tabActiva}? Esto solo debe hacerse cuando todos los partidos del grupo estén finalizados y no se puede deshacer.`)) return;
 
     try {
-      const res = await fetch(`https://prode-mundial-t3nt.onrender.com/api/admin/bonus/${tabActiva}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/admin/bonus/${tabActiva}`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

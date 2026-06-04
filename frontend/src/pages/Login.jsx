@@ -18,7 +18,7 @@ export default function Login() {
 
     try {
       // Le pegamos a nuestra API de Node.js
-      const response = await fetch('https://prode-mundial-t3nt.onrender.com/api/auth/login', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, password })

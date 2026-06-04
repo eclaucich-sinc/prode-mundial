@@ -128,7 +128,7 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
   const guardarPrediccion = async () => {
     setEstadoGuardado('⏳...');
     try {
-      const res = await fetch('https://prode-mundial-t3nt.onrender.com/api/predicciones', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/predicciones`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -492,22 +492,22 @@ export default function Dashboard() {
 
     const cargarDatos = async () => {
       try {
-        const resPartidos = await fetch('https://prode-mundial-t3nt.onrender.com/api/partidos');
+        const resPartidos = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/partidos`);
         const dataPartidos = await resPartidos.json();
 
-        const resPredicciones = await fetch('https://prode-mundial-t3nt.onrender.com/api/predicciones/mias', {
+        const resPredicciones = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/predicciones/mias`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const dataPredicciones = await resPredicciones.json();
 
-        const resRanking = await fetch('https://prode-mundial-t3nt.onrender.com/api/usuarios/ranking');
+        const resRanking = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/ranking`);
         const dataRanking = await resRanking.json();
 
         // NUEVO: Pedimos el historial para el gráfico
-        const resHistorial = await fetch('https://prode-mundial-t3nt.onrender.com/api/usuarios/historial');
+        const resHistorial = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/historial`);
         const dataHistorial = await resHistorial.json();
 
-        const resAlbum = await fetch('https://prode-mundial-t3nt.onrender.com/api/album/mias', {
+        const resAlbum = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/album/mias`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const dataAlbum = await resAlbum.json();
@@ -609,7 +609,7 @@ export default function Dashboard() {
   const comprarFigurita = async () => {
     setComprandoFigurita(true);
     try {
-      const res = await fetch('https://prode-mundial-t3nt.onrender.com/api/album/comprar', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/album/comprar`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
