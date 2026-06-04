@@ -454,6 +454,7 @@ export default function Dashboard() {
   const [albumInfo, setAlbumInfo] = useState({ puntosDisponibles: 0, figuritas: [], catalogo: [] });
   const [comprandoFigurita, setComprandoFigurita] = useState(false);
   const [flippedStickers, setFlippedStickers] = useState({});
+  const [clientName, setClientName] = useState('Prode Mundial 2026');
 
   const toggleFlip = (num) => {
     setFlippedStickers(prev => ({ ...prev, [num]: !prev[num] }));
@@ -512,6 +513,9 @@ export default function Dashboard() {
         });
         const dataAlbum = await resAlbum.json();
 
+        const resConfig = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/config`);
+        const dataConfig = await resConfig.json();
+
         // --- LÓGICA MÁGICA: Transformar datos crudos a líneas acumulativas por día ---
         const fechasSet = new Set();
         dataHistorial.forEach(item => {
@@ -554,6 +558,9 @@ export default function Dashboard() {
           setAlbumInfo(dataAlbum);
         } else {
           console.error("Error from album endpoint:", dataAlbum);
+        }
+        if (resConfig.ok && dataConfig.clientName) {
+          setClientName(dataConfig.clientName);
         }
       } catch (error) {
         console.error('Error al cargar datos:', error);
@@ -697,9 +704,9 @@ export default function Dashboard() {
             📈 Estadísticas
           </button>
 
-          {rolUsuario === 'admin' && (
-            <button disabled={true} style={tabStyle(tabActiva === 'album')} onClick={() => setTabActiva('album')}>
-              📔 Álbum (próximamente...)
+          {clientName === 'sinc(i)' && (
+            <button style={tabStyle(tabActiva === 'album')} onClick={() => setTabActiva('album')}>
+              📔 Álbum
             </button>
           )}
         </div>

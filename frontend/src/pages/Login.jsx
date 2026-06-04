@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
@@ -7,6 +7,24 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [clientName, setClientName] = useState('Prode Mundial 2026');
+
+  // Fetch config on mount
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/config`);
+        const data = await res.json();
+        if (data.clientName) {
+          setClientName(data.clientName);
+          localStorage.setItem('clientName', data.clientName);
+        }
+      } catch (err) {
+        console.error("No se pudo cargar la configuración:", err);
+      }
+    };
+    fetchConfig();
+  }, []);
 
   // Herramienta de React Router para cambiar de página
   const navigate = useNavigate();
@@ -48,7 +66,7 @@ export default function Login() {
 
   return (
     <div className="glass-panel" style={{ maxWidth: '400px', margin: '100px auto', padding: '40px', textAlign: 'center' }}>
-      <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>🏆 Prode Mundial 2026</h1>
+      <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>🏆 {clientName}</h1>
       <p style={{ color: 'var(--text-muted)' }}>Iniciá sesión para hacer tus pronósticos</p>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
