@@ -676,7 +676,7 @@ export default function Dashboard() {
         {mostrarAyuda && <ModalAyuda alCerrar={cerrarAyuda} />}
 
         {/* NAVEGACIÓN DE PESTAÑAS (AGREGAMOS ESTADÍSTICAS) */}
-        <div style={{ display: 'flex', borderBottom: '1px solid #ddd', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', borderBottom: '1px solid #ddd', marginBottom: '20px' }}>
           <button style={tabStyle(tabActiva === 'hoy')} onClick={() => setTabActiva('hoy')}>
             📅 Hoy
           </button>
@@ -797,17 +797,17 @@ export default function Dashboard() {
                 <h3 style={{ margin: 0, color: 'var(--primary-color)' }}>📔 Tu Álbum de Figuritas</h3>
                 <p style={{ margin: '5px 0 0 0', color: 'var(--text-muted)' }}>Puntos disponibles: <strong>{albumInfo.puntosDisponibles} pts</strong></p>
               </div>
-              <button 
-                onClick={comprarFigurita} 
-                disabled={comprandoFigurita || albumInfo.puntosDisponibles < 20}
-                style={{ 
-                  padding: '10px 20px', 
-                  background: albumInfo.puntosDisponibles >= 20 ? 'var(--primary-color)' : 'var(--text-muted)', 
-                  color: '#0f172a', 
-                  border: 'none', 
-                  borderRadius: '5px', 
-                  fontWeight: 'bold', 
-                  cursor: albumInfo.puntosDisponibles >= 20 ? 'pointer' : 'not-allowed',
+              <button
+                onClick={comprarFigurita}
+                disabled={comprandoFigurita || albumInfo.puntosDisponibles < 0}
+                style={{
+                  padding: '10px 20px',
+                  background: albumInfo.puntosDisponibles >= 0 ? 'var(--primary-color)' : 'var(--text-muted)',
+                  color: '#0f172a',
+                  border: 'none',
+                  borderRadius: '5px',
+                  fontWeight: 'bold',
+                  cursor: albumInfo.puntosDisponibles >= 0 ? 'pointer' : 'not-allowed',
                   opacity: comprandoFigurita ? 0.7 : 1
                 }}
               >
@@ -815,11 +815,11 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', 
-              gap: '15px', 
-              marginTop: '20px' 
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+              gap: '15px',
+              marginTop: '20px'
             }}>
               {Array.from({ length: 20 }, (_, i) => i + 1).map(num => {
                 const laTengo = albumInfo.figuritas.includes(num);
