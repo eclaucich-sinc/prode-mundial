@@ -2,6 +2,52 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+const ModalFiguritaObtenida = ({ info, alCerrar }) => {
+  if (!info) return null;
+  const catalogo = info.infoCatalogo || {};
+
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+      backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000
+    }}>
+      <div className="glass-panel" style={{
+        padding: '30px', maxWidth: '400px', width: '90%', textAlign: 'center',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
+        animation: 'zoomIn 0.3s ease-out'
+      }}>
+        <h2 style={{ margin: 0, color: 'var(--primary-color)' }}>
+          {info.esNueva ? '¡NUEVA FIGURITA!' : '¡FIGURITA REPETIDA!'}
+        </h2>
+        
+        <div style={{
+          width: '200px', aspectRatio: '3/4', borderRadius: '10px', overflow: 'hidden',
+          border: `3px solid ${info.esNueva ? 'var(--primary-color)' : 'var(--text-muted)'}`,
+          boxShadow: info.esNueva ? '0 0 30px rgba(250, 204, 21, 0.4)' : 'none',
+          backgroundColor: '#1e1b4b'
+        }}>
+          {catalogo.img_frente ? (
+            <img src={catalogo.img_frente} alt="Figurita" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'var(--primary-color)' }}>
+              <span style={{ fontSize: '60px' }}>😎</span>
+              <span style={{ marginTop: '10px' }}>#{info.figurita}</span>
+            </div>
+          )}
+        </div>
+
+        <p style={{ margin: 0, color: 'var(--text-main)', fontSize: '18px' }}>
+          {info.mensaje}
+        </p>
+
+        <button onClick={alCerrar} className="btn-primary" style={{ width: '100%', padding: '15px' }}>
+          ¡Genial!
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const ModalAyudaSinc = ({ alCerrar }) => (
   <div style={{
     position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
@@ -542,6 +588,7 @@ export default function Dashboard() {
   const [lineasOcultas, setLineasOcultas] = useState({}); // Para ocultar usuarios en el gráfico
   const [albumInfo, setAlbumInfo] = useState({ puntosDisponibles: 0, figuritas: [], catalogo: [] });
   const [comprandoFigurita, setComprandoFigurita] = useState(false);
+  const [figuritaObtenida, setFiguritaObtenida] = useState(null);
   const [flippedStickers, setFlippedStickers] = useState({});
   const [clientName, setClientName] = useState('Prode Mundial 2026');
 
@@ -719,7 +766,8 @@ export default function Dashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.mensaje);
+        const infoCatalogo = albumInfo.catalogo.find(f => f.numero === data.figurita);
+        setFiguritaObtenida({ ...data, infoCatalogo });
         setAlbumInfo(prev => ({ ...prev, puntosDisponibles: data.puntosDisponibles, figuritas: data.figuritas }));
       } else {
         alert(`❌ Error: ${data.mensaje}`);
@@ -790,6 +838,10 @@ export default function Dashboard() {
           clientName === 'sinc(i)' ? <ModalAyudaSinc alCerrar={cerrarAyuda} /> :
             clientName === 'Q21' ? <ModalAyudaQ21 alCerrar={cerrarAyuda} /> :
               <ModalAyudaSinc alCerrar={cerrarAyuda} /> // Fallback por defecto
+        )}
+        
+        {figuritaObtenida && (
+          <ModalFiguritaObtenida info={figuritaObtenida} alCerrar={() => setFiguritaObtenida(null)} />
         )}
 
         {/* NAVEGACIÓN DE PESTAÑAS (AGREGAMOS ESTADÍSTICAS) */}
@@ -955,6 +1007,7 @@ export default function Dashboard() {
                       position: 'relative',
                       transition: 'transform 0.6s',
                       transformStyle: 'preserve-3d',
+                      WebkitTransformStyle: 'preserve-3d',
                       transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
                     }}>
 
@@ -962,9 +1015,13 @@ export default function Dashboard() {
                       <div style={{
                         position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
                         backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        MozBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(0deg)',
+                        zIndex: 2,
                         borderRadius: '8px',
                         border: laTengo ? '2px solid var(--primary-color)' : '1px dashed var(--card-border)',
-                        background: laTengo ? 'rgba(250, 204, 21, 0.1)' : 'rgba(255,255,255,0.05)',
+                        background: laTengo ? '#1e1b4b' : 'var(--bg-color)',
                         display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                         overflow: 'hidden'
                       }}>
@@ -992,9 +1049,12 @@ export default function Dashboard() {
                       <div style={{
                         position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
                         backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        MozBackfaceVisibility: 'hidden',
+                        zIndex: 1,
                         borderRadius: '8px',
                         border: '2px solid var(--primary-color)',
-                        background: 'rgba(250, 204, 21, 0.1)',
+                        background: '#1e1b4b',
                         display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                         transform: 'rotateY(180deg)',
                         overflow: 'hidden'

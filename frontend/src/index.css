@@ -275,3 +275,8 @@ input[type=number] {
 .loading-text {
   animation: pulse-text 1.5s infinite ease-in-out;
 }
+
+@keyframes zoomIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
