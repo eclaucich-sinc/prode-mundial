@@ -241,7 +241,7 @@ const ModalAyudaQ21 = ({ alCerrar }) => (
 );
 
 // --- SUB-COMPONENTE MEJORADO: La tarjetita de cada partido con comparativa ---
-const PartidoCard = ({ partido, prediccionPrevia, token }) => {
+const PartidoCard = ({ partido, prediccionPrevia, token, onPredictionSaved }) => {
   // Estados para los inputs de predicción (solo se usan si está pendiente)
   const [golesLocal, setGolesLocal] = useState(prediccionPrevia ? prediccionPrevia.prediccion_goles_local : 0);
   const [golesVisitante, setGolesVisitante] = useState(prediccionPrevia ? prediccionPrevia.prediccion_goles_visitante : 0);
@@ -277,6 +277,9 @@ const PartidoCard = ({ partido, prediccionPrevia, token }) => {
       });
       if (res.ok) {
         setEstadoGuardado('✅ Guardado');
+        if (onPredictionSaved) {
+          onPredictionSaved(partido._id, Number(golesLocal), Number(golesVisitante));
+        }
       } else {
         setEstadoGuardado('❌ Error');
       }
@@ -543,7 +546,7 @@ const TablaPosiciones = ({ partidos, misPredicciones }) => {
   );
 };
 
-const FaseCard = ({ fase, dataFase, misPredicciones, token }) => {
+const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved }) => {
   const [expandido, setExpandido] = useState(false);
 
   return (
@@ -568,7 +571,7 @@ const FaseCard = ({ fase, dataFase, misPredicciones, token }) => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {dataFase.partidos.map(partido => {
               const prediccionPrevia = misPredicciones.find(p => p.partido_id === partido._id);
-              return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} />;
+              return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} onPredictionSaved={onPredictionSaved} />;
             })}
           </div>
         </div>
@@ -594,6 +597,17 @@ export default function Dashboard() {
 
   const toggleFlip = (num) => {
     setFlippedStickers(prev => ({ ...prev, [num]: !prev[num] }));
+  };
+
+  const handlePredictionSaved = (partidoId, golesLocal, golesVisitante) => {
+    setMisPredicciones(prev => {
+      const existe = prev.find(p => p.partido_id === partidoId);
+      if (existe) {
+        return prev.map(p => p.partido_id === partidoId ? { ...p, prediccion_goles_local: golesLocal, prediccion_goles_visitante: golesVisitante } : p);
+      } else {
+        return [...prev, { partido_id: partidoId, prediccion_goles_local: golesLocal, prediccion_goles_visitante: golesVisitante, puntos_ganados: null }];
+      }
+    });
   };
 
   const toggleLinea = (usuario) => {
@@ -874,7 +888,7 @@ export default function Dashboard() {
             ) : (
               partidosDeHoy.map(partido => {
                 const prediccionPrevia = misPredicciones.find(p => p.partido_id === partido._id);
-                return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} />;
+                return <PartidoCard key={partido._id} partido={partido} prediccionPrevia={prediccionPrevia} token={token} onPredictionSaved={handlePredictionSaved} />;
               })
             )}
           </div>
@@ -890,7 +904,7 @@ export default function Dashboard() {
               <p style={{ textAlign: 'center' }}>No hay partidos cargados en el fixture.</p>
             ) : (
               Object.keys(fixtureAgrupado).sort().map(fase => (
-                <FaseCard key={fase} fase={fase} dataFase={fixtureAgrupado[fase]} misPredicciones={misPredicciones} token={token} />
+                <FaseCard key={fase} fase={fase} dataFase={fixtureAgrupado[fase]} misPredicciones={misPredicciones} token={token} onPredictionSaved={handlePredictionSaved} />
               ))
             )}
           </div>
