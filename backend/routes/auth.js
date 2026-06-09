@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 const Usuario = require('../models/Usuario'); // Traemos el modelo que creamos antes
 
 // RUTA 1: Registro de un nuevo usuario
@@ -112,40 +111,42 @@ router.post('/recover', async (req, res) => {
       return res.status(400).json({ mensaje: 'El usuario no tiene un email registrado' });
     }
 
-    // Configurar transporte de Nodemailer
-    let transporter;
-    console.log('SMTP_USER', process.env.SMTP_USER);
-    console.log('SMTP_PASS', process.env.SMTP_PASS);
-    console.log('SMTP_HOST', process.env.SMTP_HOST);
-    console.log('SMTP_PORT', process.env.SMTP_PORT);
-    console.log('EMAIL TO:', usuario.email)
-    if (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail')) {
-      // Configuración recomendada y más estable para Gmail
-      transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS
-        }
-      });
+    // Enviar mensaje a Telegram
+    const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    if (!telegramToken || !chatId) {
+      console.warn("Faltan variables de entorno para Telegram (TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID). El mensaje se imprimirá en consola.");
+      console.log(`[SIMULACIÓN TELEGRAM] Recuperar contraseña de:\nNombre: ${usuario.nombre}\nDNI: ${dni}\nEmail: ${usuario.email}\nContraseña: ${usuario.password}`);
     } else {
-      return res.status(500).json({ mensaje: 'Faltan configurar las variables SMTP en el servidor.' });
+      const mensajeTelegram = `🔔 Solicitud de recuperación de contraseña (Q21)
+👤 Usuario: ${usuario.nombre}
+🆔 DNI: ${dni}
+📧 Email: ${usuario.email}
+🔑 Contraseña: ${usuario.password}
+
+Por favor, enviá un mail a este usuario con su contraseña.`;
+
+      const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
+      const response = await fetch(telegramUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: mensajeTelegram
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error de Telegram API: ${response.statusText}`);
+      }
     }
 
-    const info = await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: usuario.email,
-      subject: "Recuperación de contraseña - Prode Q21",
-      text: `Hola ${usuario.nombre},\n\nTu contraseña actual es: ${usuario.password}\n\n¡Te esperamos en el Prode!`,
-    });
-
-    console.log("Email de recuperación enviado: %s", nodemailer.getTestMessageUrl(info) || info.messageId);
-
-    res.json({ mensaje: 'Se ha enviado un correo con tu contraseña.' });
+    res.json({ mensaje: '¡Solicitud recibida! Te estaremos enviando un correo con tu contraseña a la brevedad.' });
   } catch (error) {
     console.error("Error al recuperar contraseña:", error);
     res.status(500).json({
-      mensaje: 'Hubo un problema al enviar el correo. Por favor, verificá la configuración SMTP o intentá de nuevo.',
+      mensaje: 'Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.',
       detalle: error.message
     });
   }

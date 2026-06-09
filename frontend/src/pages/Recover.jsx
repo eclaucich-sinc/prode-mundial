@@ -27,7 +27,7 @@ export default function Recover() {
       const data = await response.json();
 
       if (response.ok) {
-        setExito('¡Correo de recuperación enviado exitosamente!');
+        setExito(data.mensaje || '¡Solicitud enviada exitosamente!');
         setTimeout(() => navigate('/login'), 4000);
       } else {
         setError(data.mensaje || 'Error al recuperar la contraseña');
@@ -66,7 +66,7 @@ export default function Recover() {
           className="btn-primary"
           disabled={loading}
           style={{ padding: '12px', fontSize: '16px', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
-          {loading ? 'Enviando... ⏳' : 'Enviar contraseña al Email'}
+          {loading ? 'Enviando... ⏳' : 'Solicitar contraseña'}
         </button>
       </form>
 
