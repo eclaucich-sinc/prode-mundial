@@ -118,20 +118,11 @@ router.post('/recover', async (req, res) => {
     console.log('SMTP_PASS', process.env.SMTP_PASS);
     console.log('SMTP_HOST', process.env.SMTP_HOST);
     console.log('SMTP_PORT', process.env.SMTP_PORT);
+    console.log('EMAIL TO:', usuario.email)
     if (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail')) {
       // Configuración recomendada y más estable para Gmail
       transporter = nodemailer.createTransport({
         service: 'gmail',
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS
-        }
-      });
-    } else if (process.env.SMTP_HOST) {
-      transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: Number(process.env.SMTP_PORT) === 465, // true para port 465, false para 587
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS
@@ -142,7 +133,7 @@ router.post('/recover', async (req, res) => {
     }
 
     const info = await transporter.sendMail({
-      from: `Prode Q21 <${process.env.SMTP_USER}>`,
+      from: process.env.SMTP_USER,
       to: usuario.email,
       subject: "Recuperación de contraseña - Prode Q21",
       text: `Hola ${usuario.nombre},\n\nTu contraseña actual es: ${usuario.password}\n\n¡Te esperamos en el Prode!`,
