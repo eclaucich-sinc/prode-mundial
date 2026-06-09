@@ -52,7 +52,7 @@ export default function Login() {
   return (
     <div className="glass-panel" style={{ width: '90%', maxWidth: '400px', margin: '5vh auto', padding: '30px 20px', textAlign: 'center' }}>
       {clientName === 'Q21' && (
-        <img src={logoQ21} alt="Logo Q21" style={{ maxWidth: '200px', marginBottom: '15px' }} />
+        <img src={logoQ21} alt="Logo Q21" style={{ maxWidth: '300px', marginBottom: '15px' }} />
       )}
       {clientName === 'sinc(i)' && (
         <img src={logoSinc} alt="Logo Sinc" style={{ maxWidth: '300px', marginBottom: '15px' }} />
