@@ -138,7 +138,7 @@ router.post('/recover', async (req, res) => {
     }
 
     const info = await transporter.sendMail({
-      from: '"Prode Q21" <no-reply@q21prode.com>',
+      from: `Prode Q21 <${process.env.SMTP_USER}>`,
       to: usuario.email,
       subject: "Recuperación de contraseña - Prode Q21",
       text: `Hola ${usuario.nombre},\n\nTu contraseña actual es: ${usuario.password}\n\n¡Te esperamos en el Prode!`,
