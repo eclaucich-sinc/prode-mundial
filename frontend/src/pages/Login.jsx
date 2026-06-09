@@ -84,6 +84,12 @@ export default function Login() {
       <p style={{ marginTop: '20px', fontSize: '14px', color: 'var(--text-muted)' }}>
         ¿No tenés cuenta? <Link to="/register" style={{ color: 'var(--primary-color)', textDecoration: 'none', fontWeight: 'bold' }}>Registrate acá</Link>
       </p>
+
+      {clientName === 'Q21' && (
+        <p style={{ marginTop: '10px', fontSize: '14px', color: 'var(--text-muted)' }}>
+          ¿Olvidaste tu contraseña? <Link to="/recover" style={{ color: 'var(--primary-color)', textDecoration: 'none', fontWeight: 'bold' }}>Recuperala acá</Link>
+        </p>
+      )}
     </div>
   );
 }

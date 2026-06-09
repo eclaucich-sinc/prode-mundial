@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const Usuario = require('../models/Usuario'); // Traemos el modelo que creamos antes
 
 // RUTA 1: Registro de un nuevo usuario
@@ -24,14 +25,17 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ mensaje: 'El nombre de usuario ya está registrado' });
     }
 
-    // 2. Encriptamos la contraseña
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // 2. Si el cliente es Q21, guardamos en texto plano (req del cliente). Si no, encriptamos.
+    let finalPassword = password;
+    if (clientName !== 'Q21') {
+      const salt = await bcrypt.genSalt(10);
+      finalPassword = await bcrypt.hash(password, salt);
+    }
 
     // 3. Creamos el usuario y lo guardamos
     const nuevoUsuario = new Usuario({
       nombre,
-      password: hashedPassword,
+      password: finalPassword,
       email: email || undefined,
       dni: dni || undefined
     });
@@ -54,8 +58,16 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ mensaje: 'Credenciales inválidas' });
     }
 
-    // 2. Comparamos la contraseña ingresada con la encriptada en la base de datos
-    const esPasswordCorrecto = await bcrypt.compare(password, usuario.password);
+    // 2. Comparamos la contraseña (texto plano para Q21, bcrypt para otros)
+    const clientName = process.env.CLIENT_NAME || 'Prode Mundial 2026';
+    let esPasswordCorrecto = false;
+
+    if (clientName === 'Q21') {
+      esPasswordCorrecto = (password === usuario.password);
+    } else {
+      esPasswordCorrecto = await bcrypt.compare(password, usuario.password);
+    }
+
     if (!esPasswordCorrecto) {
       return res.status(400).json({ mensaje: 'Credenciales inválidas' });
     }
@@ -75,6 +87,70 @@ router.post('/login', async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ mensaje: 'Error en el servidor', error: error.message });
+  }
+});
+
+// RUTA 3: Recuperar contraseña
+router.post('/recover', async (req, res) => {
+  try {
+    const clientName = process.env.CLIENT_NAME || 'Prode Mundial 2026';
+    if (clientName !== 'Q21') {
+      return res.status(403).json({ mensaje: 'Esta función solo está disponible para el cliente Q21' });
+    }
+
+    const { nombre, dni } = req.body;
+    if (!nombre || !dni) {
+      return res.status(400).json({ mensaje: 'Nombre de usuario y DNI son obligatorios' });
+    }
+
+    const usuario = await Usuario.findOne({ nombre, dni });
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'No se encontró un usuario con ese nombre y DNI' });
+    }
+    
+    if (!usuario.email) {
+      return res.status(400).json({ mensaje: 'El usuario no tiene un email registrado' });
+    }
+
+    // Configurar transporte de Nodemailer
+    // Usamos ethereal para pruebas, en prod se debería usar un SMTP real leyendo de process.env
+    let transporter;
+    if (process.env.SMTP_HOST) {
+      transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT || 587,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS
+        }
+      });
+    } else {
+      // Fake testing transport si no hay configurado un SMTP real
+      const testAccount = await nodemailer.createTestAccount();
+      transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, 
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass,
+        },
+      });
+    }
+
+    const info = await transporter.sendMail({
+      from: '"Prode Q21" <no-reply@q21prode.com>',
+      to: usuario.email,
+      subject: "Recuperación de contraseña - Prode Q21",
+      text: `Hola ${usuario.nombre},\n\nTu contraseña actual es: ${usuario.password}\n\n¡Te esperamos en el Prode!`,
+    });
+
+    console.log("Email de recuperación enviado: %s", nodemailer.getTestMessageUrl(info) || info.messageId);
+
+    res.json({ mensaje: 'Se ha enviado un correo con tu contraseña.' });
+  } catch (error) {
+    console.error("Error al recuperar contraseña:", error);
+    res.status(500).json({ mensaje: 'Error interno del servidor', error: error.message });
   }
 });
 
