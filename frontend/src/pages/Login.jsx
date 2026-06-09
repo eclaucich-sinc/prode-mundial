@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
@@ -7,24 +7,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [clientName, setClientName] = useState('Prode Mundial 2026');
-
-  // Fetch config on mount
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/config`);
-        const data = await res.json();
-        if (data.clientName) {
-          setClientName(data.clientName);
-          localStorage.setItem('clientName', data.clientName);
-        }
-      } catch (err) {
-        console.error("No se pudo cargar la configuración:", err);
-      }
-    };
-    fetchConfig();
-  }, []);
+  const clientName = import.meta.env.VITE_CLIENT_NAME || 'Prode Mundial 2026';
 
   // Herramienta de React Router para cambiar de página
   const navigate = useNavigate();

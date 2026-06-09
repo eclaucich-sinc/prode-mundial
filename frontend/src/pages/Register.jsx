@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Register() {
@@ -10,19 +10,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
   const [loading, setLoading] = useState(false);
-  const [clientName, setClientName] = useState(localStorage.getItem('clientName') || 'Prode Mundial 2026');
-
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/config`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.clientName) {
-          setClientName(data.clientName);
-          localStorage.setItem('clientName', data.clientName);
-        }
-      })
-      .catch(err => console.error(err));
-  }, []);
+  const clientName = import.meta.env.VITE_CLIENT_NAME || 'Prode Mundial 2026';
 
   const navigate = useNavigate();
 

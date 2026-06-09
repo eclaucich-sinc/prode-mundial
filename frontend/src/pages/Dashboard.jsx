@@ -593,7 +593,7 @@ export default function Dashboard() {
   const [comprandoFigurita, setComprandoFigurita] = useState(false);
   const [figuritaObtenida, setFiguritaObtenida] = useState(null);
   const [flippedStickers, setFlippedStickers] = useState({});
-  const [clientName, setClientName] = useState('Prode Mundial 2026');
+  const clientName = import.meta.env.VITE_CLIENT_NAME || 'Prode Mundial 2026';
 
   const toggleFlip = (num) => {
     setFlippedStickers(prev => ({ ...prev, [num]: !prev[num] }));
@@ -663,9 +663,6 @@ export default function Dashboard() {
         });
         const dataAlbum = await resAlbum.json();
 
-        const resConfig = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/config`);
-        const dataConfig = await resConfig.json();
-
         // --- LÓGICA MÁGICA: Transformar datos crudos a líneas acumulativas por día ---
         const fechasSet = new Set();
         dataHistorial.forEach(item => {
@@ -701,17 +698,10 @@ export default function Dashboard() {
         setDatosGrafico({ data: dataFormateada, usuarios: todosLosUsuarios });
         // -------------------------------------------------------------------------
 
-        setPartidos(dataPartidos);
-        setMisPredicciones(dataPredicciones);
-        setRanking(dataRanking);
-        if (resAlbum.ok) {
-          setAlbumInfo(dataAlbum);
-        } else {
-          console.error("Error from album endpoint:", dataAlbum);
-        }
-        if (resConfig.ok && dataConfig.clientName) {
-          setClientName(dataConfig.clientName);
-        }
+        if (resPartidos.ok) setPartidos(dataPartidos);
+        if (resPredicciones.ok) setMisPredicciones(dataPredicciones.predicciones || dataPredicciones);
+        if (resRanking.ok) setRanking(dataRanking);
+        if (resAlbum.ok) setAlbumInfo({ puntosDisponibles: dataAlbum.puntosDisponibles, figuritas: dataAlbum.figuritas, catalogo: dataAlbum.catalogo });
       } catch (error) {
         console.error('Error al cargar datos:', error);
       } finally {
