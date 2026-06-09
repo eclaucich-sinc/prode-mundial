@@ -3,11 +3,22 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Usuario = require('../models/Usuario'); // Traemos el modelo que creamos antes
+const Config = require('../models/Config'); // Para obtener clientName
 
 // RUTA 1: Registro de un nuevo usuario
 router.post('/register', async (req, res) => {
   try {
-    const { nombre, password } = req.body;
+    const { nombre, password, email, dni } = req.body;
+
+    // 0. Validar requerimientos por cliente
+    const config = await Config.findOne();
+    const clientName = config ? config.clientName : 'Prode Mundial 2026';
+
+    if (clientName === 'Q21') {
+      if (!email || !dni) {
+        return res.status(400).json({ mensaje: 'Email y DNI son obligatorios para este registro' });
+      }
+    }
 
     // 1. Verificamos si el usuario ya existe
     let usuarioExistente = await Usuario.findOne({ nombre });
@@ -22,7 +33,9 @@ router.post('/register', async (req, res) => {
     // 3. Creamos el usuario y lo guardamos
     const nuevoUsuario = new Usuario({
       nombre,
-      password: hashedPassword
+      password: hashedPassword,
+      email: email || undefined,
+      dni: dni || undefined
     });
     await nuevoUsuario.save();
 

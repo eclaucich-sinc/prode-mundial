@@ -6,7 +6,7 @@ const Prediccion = require('./models/Prediccion');
 
 async function resetearResultados() {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect("mongodb+srv://eclaucich_db_user:eb39R0xeOvHQ9cI9@cluster0.8jmgwfe.mongodb.net/");
     console.log('✅ Conectado a MongoDB. Iniciando limpieza del sistema...');
 
     // 1. Resetear todos los Partidos a 'pendiente' y borrar resultados reales
@@ -32,7 +32,7 @@ async function resetearResultados() {
 
     console.log('\n✨ ¡Reseteo completado exitosamente!');
     console.log('El sistema ahora está limpio y listo para volver a probar o arrancar el torneo real.');
-    
+
     process.exit(0);
   } catch (error) {
     console.error('❌ Error durante el reseteo:', error);

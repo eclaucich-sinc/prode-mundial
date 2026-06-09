@@ -6,6 +6,8 @@ const usuarioSchema = new mongoose.Schema({
   puntos_totales: { type: Number, default: 0 }, // Arranca en cero
   puntos_gastados: { type: Number, default: 0 }, // Puntos gastados en figuritas
   figuritas: { type: [Number], default: [] }, // Array con los números de figuritas conseguidas
+  email: { type: String, required: false },
+  dni: { type: String, required: false },
   rol: { type: String, default: 'user' }
 });
 

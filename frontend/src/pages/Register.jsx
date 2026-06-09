@@ -1,13 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Register() {
   const [nombre, setNombre] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [dni, setDni] = useState('');
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
   const [loading, setLoading] = useState(false);
+  const [clientName, setClientName] = useState('Prode Mundial 2026');
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/config/clientName`)
+      .then(res => res.json())
+      .then(data => setClientName(data.clientName))
+      .catch(() => setClientName('Prode Mundial 2026'));
+  }, []);
 
   const navigate = useNavigate();
 
@@ -27,7 +37,12 @@ export default function Register() {
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, password })
+        body: JSON.stringify({ 
+          nombre, 
+          password,
+          email: clientName === 'Q21' ? email : undefined,
+          dni: clientName === 'Q21' ? dni : undefined
+        })
       });
 
       const data = await response.json();
@@ -59,6 +74,27 @@ export default function Register() {
           required
           style={{ padding: '12px', fontSize: '16px', borderRadius: '8px' }}
         />
+
+        {clientName === 'Q21' && (
+          <>
+            <input
+              type="email"
+              placeholder="Tu Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={{ padding: '12px', fontSize: '16px', borderRadius: '8px' }}
+            />
+            <input
+              type="text"
+              placeholder="Tu DNI"
+              value={dni}
+              onChange={(e) => setDni(e.target.value)}
+              required
+              style={{ padding: '12px', fontSize: '16px', borderRadius: '8px' }}
+            />
+          </>
+        )}
         <input
           type="password"
           placeholder="Tu contraseña"
