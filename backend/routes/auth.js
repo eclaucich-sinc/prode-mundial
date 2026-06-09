@@ -113,30 +113,28 @@ router.post('/recover', async (req, res) => {
     }
 
     // Configurar transporte de Nodemailer
-    // Usamos ethereal para pruebas, en prod se debería usar un SMTP real leyendo de process.env
     let transporter;
-    if (process.env.SMTP_HOST) {
+    if (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail')) {
+      // Configuración recomendada y más estable para Gmail
+      transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS
+        }
+      });
+    } else if (process.env.SMTP_HOST) {
       transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT || 587,
-        secure: process.env.SMTP_PORT == 465, // true para port 465 (Gmail), false para 587
+        port: Number(process.env.SMTP_PORT) || 587,
+        secure: Number(process.env.SMTP_PORT) === 465, // true para port 465, false para 587
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS
         }
       });
     } else {
-      // Fake testing transport si no hay configurado un SMTP real
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, 
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
+      return res.status(500).json({ mensaje: 'Faltan configurar las variables SMTP en el servidor.' });
     }
 
     const info = await transporter.sendMail({
@@ -151,7 +149,10 @@ router.post('/recover', async (req, res) => {
     res.json({ mensaje: 'Se ha enviado un correo con tu contraseña.' });
   } catch (error) {
     console.error("Error al recuperar contraseña:", error);
-    res.status(500).json({ mensaje: 'Error interno del servidor', error: error.message });
+    res.status(500).json({ 
+      mensaje: 'Hubo un problema al enviar el correo. Por favor, verificá la configuración SMTP o intentá de nuevo.', 
+      detalle: error.message 
+    });
   }
 });
 
