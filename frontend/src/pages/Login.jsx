@@ -52,10 +52,10 @@ export default function Login() {
   return (
     <div className="glass-panel" style={{ width: '90%', maxWidth: '400px', margin: '5vh auto', padding: '30px 20px', textAlign: 'center' }}>
       {clientName === 'Q21' && (
-        <img src={logoQ21} alt="Logo Q21" style={{ maxWidth: '150px', marginBottom: '15px' }} />
+        <img src={logoQ21} alt="Logo Q21" style={{ maxWidth: '300px', marginBottom: '15px' }} />
       )}
       {clientName === 'sinc(i)' && (
-        <img src={logoSinc} alt="Logo Sinc" style={{ maxWidth: '150px', marginBottom: '15px' }} />
+        <img src={logoSinc} alt="Logo Sinc" style={{ maxWidth: '300px', marginBottom: '15px' }} />
       )}
       <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>
         🏆 Prode Mundial 2026 {clientName !== 'Q21' && <><br /> {clientName}</>}

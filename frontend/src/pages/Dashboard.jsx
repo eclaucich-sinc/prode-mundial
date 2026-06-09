@@ -805,8 +805,8 @@ export default function Dashboard() {
       {/* --- COLUMNA 1: EL RANKING (FIJA A LA IZQUIERDA) --- */}
       <div className="glass-panel sidebar">
         <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-          {clientName === 'Q21' && <img src={logoQ21} alt="Logo Q21" style={{ maxWidth: '120px' }} />}
-          {clientName === 'sinc(i)' && <img src={logoSinc} alt="Logo Sinc" style={{ maxWidth: '120px' }} />}
+          {clientName === 'Q21' && <img src={logoQ21} alt="Logo Q21" style={{ maxWidth: '240px' }} />}
+          {clientName === 'sinc(i)' && <img src={logoSinc} alt="Logo Sinc" style={{ maxWidth: '240px' }} />}
         </div>
         <h3 style={{ margin: '0 0 20px 0', textAlign: 'center', color: 'var(--primary-color)' }}>📊 Tabla de Posiciones</h3>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
