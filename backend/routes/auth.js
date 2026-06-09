@@ -119,6 +119,7 @@ router.post('/recover', async (req, res) => {
       transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT || 587,
+        secure: process.env.SMTP_PORT == 465, // true para port 465 (Gmail), false para 587
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS
