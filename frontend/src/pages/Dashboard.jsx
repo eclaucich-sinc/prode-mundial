@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logoQ21 from '../assets/logo_q21.png';
+import logoSinc from '../assets/logo_sinc.png';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const ModalFiguritaObtenida = ({ info, alCerrar }) => {
@@ -19,7 +21,7 @@ const ModalFiguritaObtenida = ({ info, alCerrar }) => {
         <h2 style={{ margin: 0, color: 'var(--primary-color)' }}>
           {info.esNueva ? '¡NUEVA FIGURITA!' : '¡FIGURITA REPETIDA!'}
         </h2>
-        
+
         <div style={{
           width: '200px', aspectRatio: '3/4', borderRadius: '10px', overflow: 'hidden',
           border: `3px solid ${info.esNueva ? 'var(--primary-color)' : 'var(--text-muted)'}`,
@@ -829,7 +831,15 @@ export default function Dashboard() {
       <div className="main-content">
 
         <div className="header-top">
-          <h1 style={{ margin: 0, fontSize: '28px', color: 'var(--text-main)' }}>🏆 Hola, {nombreUsuario}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            {clientName === 'Q21' && (
+              <img src={logoQ21} alt="Logo Q21" style={{ height: '40px', width: 'auto' }} />
+            )}
+            {clientName === 'sinc(i)' && (
+              <img src={logoSinc} alt="Logo Sinc" style={{ height: '40px', width: 'auto' }} />
+            )}
+            <h1 style={{ margin: 0, fontSize: '28px', color: 'var(--text-main)' }}>🏆 Hola, {nombreUsuario}</h1>
+          </div>
           <div className="header-buttons">
             <button onClick={() => setMostrarAyuda(true)} style={{ padding: '10px 20px', background: 'var(--success-color)', color: 'var(--text-main)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}>❔ Ayuda</button>
             {rolUsuario === 'admin' && (
@@ -843,7 +853,7 @@ export default function Dashboard() {
             clientName === 'Q21' ? <ModalAyudaQ21 alCerrar={cerrarAyuda} /> :
               <ModalAyudaSinc alCerrar={cerrarAyuda} /> // Fallback por defecto
         )}
-        
+
         {figuritaObtenida && (
           <ModalFiguritaObtenida info={figuritaObtenida} alCerrar={() => setFiguritaObtenida(null)} />
         )}

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import logoQ21 from '../assets/logo_q21.png';
+import logoSinc from '../assets/logo_sinc.png';
 
 export default function Login() {
   // Estados para guardar lo que el usuario escribe
@@ -49,7 +51,15 @@ export default function Login() {
 
   return (
     <div className="glass-panel" style={{ width: '90%', maxWidth: '400px', margin: '5vh auto', padding: '30px 20px', textAlign: 'center' }}>
-      <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>🏆 Prode Mundial 2026 <br /> {clientName}</h1>
+      {clientName === 'Q21' && (
+        <img src={logoQ21} alt="Logo Q21" style={{ maxWidth: '150px', marginBottom: '15px' }} />
+      )}
+      {clientName === 'sinc(i)' && (
+        <img src={logoSinc} alt="Logo Sinc" style={{ maxWidth: '150px', marginBottom: '15px' }} />
+      )}
+      <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>
+        🏆 Prode Mundial 2026 {clientName !== 'Q21' && <><br /> {clientName}</>}
+      </h1>
       <p style={{ color: 'var(--text-muted)' }}>Iniciá sesión para hacer tus pronósticos</p>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
