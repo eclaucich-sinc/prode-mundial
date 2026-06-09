@@ -74,15 +74,15 @@ router.post('/login', async (req, res) => {
 
     // 3. Si todo está bien, generamos el Token (JWT)
     const token = jwt.sign(
-      { id: usuario._id, nombre: usuario.nombre }, 
-      process.env.JWT_SECRET, 
+      { id: usuario._id, nombre: usuario.nombre },
+      process.env.JWT_SECRET,
       { expiresIn: '30d' } // El token dura 30 días para que no se tengan que loguear a cada rato
     );
 
-    res.json({ 
-      mensaje: 'Login exitoso', 
-      token, 
-      usuario: { id: usuario._id, nombre: usuario.nombre, puntos: usuario.puntos_totales, rol: usuario.rol } 
+    res.json({
+      mensaje: 'Login exitoso',
+      token,
+      usuario: { id: usuario._id, nombre: usuario.nombre, puntos: usuario.puntos_totales, rol: usuario.rol }
     });
 
   } catch (error) {
@@ -107,13 +107,17 @@ router.post('/recover', async (req, res) => {
     if (!usuario) {
       return res.status(404).json({ mensaje: 'No se encontró un usuario con ese nombre y DNI' });
     }
-    
+
     if (!usuario.email) {
       return res.status(400).json({ mensaje: 'El usuario no tiene un email registrado' });
     }
 
     // Configurar transporte de Nodemailer
     let transporter;
+    console.log('SMTP_USER', process.env.SMTP_USER);
+    console.log('SMTP_PASS', process.env.SMTP_PASS);
+    console.log('SMTP_HOST', process.env.SMTP_HOST);
+    console.log('SMTP_PORT', process.env.SMTP_PORT);
     if (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail')) {
       // Configuración recomendada y más estable para Gmail
       transporter = nodemailer.createTransport({
@@ -149,9 +153,9 @@ router.post('/recover', async (req, res) => {
     res.json({ mensaje: 'Se ha enviado un correo con tu contraseña.' });
   } catch (error) {
     console.error("Error al recuperar contraseña:", error);
-    res.status(500).json({ 
-      mensaje: 'Hubo un problema al enviar el correo. Por favor, verificá la configuración SMTP o intentá de nuevo.', 
-      detalle: error.message 
+    res.status(500).json({
+      mensaje: 'Hubo un problema al enviar el correo. Por favor, verificá la configuración SMTP o intentá de nuevo.',
+      detalle: error.message
     });
   }
 });
