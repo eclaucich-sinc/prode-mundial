@@ -6,7 +6,7 @@ const Prediccion = require('./models/Prediccion');
 
 async function resetearResultados() {
   try {
-    await mongoose.connect("mongodb+srv://eclaucich_db_user:eb39R0xeOvHQ9cI9@cluster0.8jmgwfe.mongodb.net/");
+    await mongoose.connect(process.env.MONGO_URI);
     console.log('✅ Conectado a MongoDB. Iniciando limpieza del sistema...');
 
     // 1. Resetear todos los Partidos a 'pendiente' y borrar resultados reales
