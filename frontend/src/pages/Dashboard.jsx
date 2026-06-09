@@ -132,10 +132,20 @@ const ModalAyudaSinc = ({ alCerrar }) => (
             <span>🤖</span> La Batalla Final
           </h3>
           <p style={{ margin: '0 0 10px 0', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-            Este prode es exclusivo interno al equipo <strong>sinc(i)</strong>. Sin embargo, no estaremos compitiendo solo entre nosotros, sino que también contra modelos de IA (Claude Sonnet, Gemini) y predictores aleatorios.
+            Este prode es exclusivo interno al equipo <strong>sinc(i)</strong>. Sin embargo, no estaremos compitiendo solo entre nosotros, sino que también contra modelos de IA y predictores aleatorios.
           </p>
           <p style={{ margin: 0, color: 'var(--text-main)', lineHeight: '1.6', fontWeight: 'bold' }}>
             🎁 Habrá premios para el podio al finalizar el mundial... ¡A menos que gane una IA, en ese caso no nos merecemos ganar nada!
+          </p>
+        </div>
+
+        {/* Section: Competencia */}
+        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '10px', border: '1px solid var(--card-border)' }}>
+          <h3 style={{ color: '#eab308', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>🤝</span> Trabajo en equipo
+          </h3>
+          <p style={{ margin: '0 0 10px 0', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+            Habrá un usuario que usará las predicciones de todos los miembros del sinc para tomar sus deciciones finales. Así que también estamos prediciendo todos juntos. Por lo menos logremos que este usuario le gane a las IA.
           </p>
         </div>
       </div>
