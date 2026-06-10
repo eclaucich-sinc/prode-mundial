@@ -65,7 +65,7 @@ export default function Login() {
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
         <input
           type="text"
-          placeholder={clientName === 'Q21' ? "Tu DNI, Email o Usuario" : "Tu nombre de usuario"}
+          placeholder={clientName === 'Q21' ? "Tu DNI o Email" : "Tu nombre de usuario"}
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required

@@ -2,8 +2,44 @@ const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/Usuario');
 const Prediccion = require('../models/Prediccion'); // NUEVO: Importamos las predicciones
+const auth = require('../middleware/auth');
 
 
+// RUTA: Obtener mi usuario
+router.get('/me', auth, async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.usuario.id);
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    res.json({ id: usuario._id, nombre: usuario.nombre, cambio_nombre: usuario.cambio_nombre });
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al obtener usuario', error: err.message });
+  }
+});
+
+// RUTA: Cambiar el nombre de usuario (sólo una vez)
+router.put('/renombrar', auth, async (req, res) => {
+  try {
+    const { nuevoNombre } = req.body;
+    const usuario = await Usuario.findById(req.usuario.id);
+    if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+
+    if (usuario.cambio_nombre) {
+      return res.status(400).json({ mensaje: 'Ya modificaste tu nombre. Solo se permite un cambio.' });
+    }
+
+    if (!nuevoNombre || nuevoNombre.trim().length < 3) {
+      return res.status(400).json({ mensaje: 'El nombre debe tener al menos 3 caracteres.' });
+    }
+
+    usuario.nombre = nuevoNombre.trim();
+    usuario.cambio_nombre = true;
+    await usuario.save();
+
+    res.json({ mensaje: 'Nombre actualizado con éxito', nuevoNombre: usuario.nombre });
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al cambiar el nombre', error: err.message });
+  }
+});
 // RUTA: Obtener el ranking ordenado de mayor a menor
 router.get('/ranking', async (req, res) => {
   try {

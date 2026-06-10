@@ -8,6 +8,7 @@ const usuarioSchema = new mongoose.Schema({
   figuritas: { type: [Number], default: [] }, // Array con los números de figuritas conseguidas
   email: { type: String, required: false, unique: true, sparse: true },
   dni: { type: String, required: false, unique: true, sparse: true },
+  cambio_nombre: { type: Boolean, default: false },
   rol: { type: String, default: 'user' }
 });
 

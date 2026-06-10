@@ -57,11 +57,16 @@ export default function Register() {
     <div className="glass-panel" style={{ width: '90%', maxWidth: '400px', margin: '5vh auto', padding: '30px 20px', textAlign: 'center' }}>
       <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>🏆 Prode Mundial 2026</h1>
       <p style={{ color: 'var(--text-muted)' }}>Creá tu cuenta para empezar a jugar</p>
+      {clientName === 'Q21' && (
+        <p style={{ color: 'var(--danger-color)', fontSize: '0.9rem', marginTop: '10px', fontWeight: 'bold' }}>
+          El usuario DEBE ser tu nombre y apellido. Las cuentas que no respeten esto serán eliminadas. Respetar esto es condición necesaria para participar de la promo.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
         <input
           type="text"
-          placeholder="Tu nombre de usuario"
+          placeholder={clientName === 'Q21' ? "Nombre y apellido" : "Tu nombre de usuario"}
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required

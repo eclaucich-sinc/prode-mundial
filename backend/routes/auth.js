@@ -61,20 +61,22 @@ router.post('/login', async (req, res) => {
   try {
     const { nombre, password } = req.body;
 
-    // 1. Buscamos al usuario por nombre, email o DNI
-    const usuario = await Usuario.findOne({ 
-      $or: [
-        { nombre },
-        { email: nombre },
-        { dni: nombre }
-      ]
-    });
+    const clientName = process.env.CLIENT_NAME || 'Prode Mundial 2026';
+
+    // 1. Buscamos al usuario por nombre, email o DNI (para Q21 obligamos a que sea Email o DNI)
+    let query;
+    if (clientName === 'Q21') {
+      query = { $or: [{ email: nombre }, { dni: nombre }] };
+    } else {
+      query = { $or: [{ nombre }, { email: nombre }, { dni: nombre }] };
+    }
+
+    const usuario = await Usuario.findOne(query);
     if (!usuario) {
-      return res.status(400).json({ mensaje: 'Credenciales inválidas' });
+      return res.status(400).json({ mensaje: clientName === 'Q21' ? 'No se encontró un usuario con ese DNI o Email' : 'Credenciales inválidas' });
     }
 
     // 2. Comparamos la contraseña (texto plano para Q21, bcrypt para otros)
-    const clientName = process.env.CLIENT_NAME || 'Prode Mundial 2026';
     let esPasswordCorrecto = false;
 
     if (clientName === 'Q21') {

@@ -595,6 +595,40 @@ const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved })
 // Array de colores predefinidos para que cada línea de usuario tenga un color distinto
 const COLORES = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#d0ed57', '#a4de6c', '#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
+const ModalRenombrar = ({ alCerrar, alGuardar, errorMsg, clientName, loading }) => {
+  const [nuevoNombre, setNuevoNombre] = useState('');
+
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+      <div className="glass-panel" style={{ padding: '40px', maxWidth: '400px', width: '90%', textAlign: 'center', backgroundColor: '#0f172a', border: '1px solid var(--card-border)' }}>
+        <h2 style={{ marginTop: 0, color: 'var(--primary-color)' }}>Modificar Usuario</h2>
+        <p style={{ color: 'var(--text-muted)' }}>
+          Podés modificar tu nombre de usuario <strong>UNA ÚNICA VEZ</strong>. ¡Cambiálo con cuidado!
+        </p>
+        {clientName === 'Q21' && (
+          <p style={{ color: 'var(--danger-color)', fontSize: '0.85rem', fontWeight: 'bold' }}>
+            RECORDATORIO: El usuario DEBE ser tu nombre y apellido. Las cuentas que no respeten esto serán eliminadas de la promo.
+          </p>
+        )}
+        <input 
+          type="text" 
+          value={nuevoNombre} 
+          onChange={(e) => setNuevoNombre(e.target.value)} 
+          placeholder={clientName === 'Q21' ? "Nombre y apellido" : "Nuevo nombre"}
+          style={{ width: '100%', padding: '12px', fontSize: '16px', borderRadius: '8px', margin: '15px 0' }}
+        />
+        {errorMsg && <p style={{ color: 'var(--danger-color)', margin: '0 0 15px 0', fontSize: '14px' }}>{errorMsg}</p>}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={alCerrar} className="btn-secondary" style={{ flex: 1, padding: '10px', background: 'transparent', border: '1px solid var(--text-muted)', color: 'var(--text-main)', borderRadius: '8px' }}>Cancelar</button>
+          <button onClick={() => alGuardar(nuevoNombre)} className="btn-primary" disabled={loading} style={{ flex: 1, padding: '10px', borderRadius: '8px', opacity: loading ? 0.7 : 1 }}>
+            {loading ? '...' : 'Guardar'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Dashboard() {
   const [partidos, setPartidos] = useState([]);
   const [misPredicciones, setMisPredicciones] = useState([]);
@@ -644,8 +678,12 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const nombreUsuario = localStorage.getItem('nombre_usuario') || 'Jugador';
+  const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem('nombre_usuario') || 'Jugador');
   const rolUsuario = localStorage.getItem('rol_usuario') || 'user';
+  const [puedeCambiarNombre, setPuedeCambiarNombre] = useState(false);
+  const [editandoNombre, setEditandoNombre] = useState(false);
+  const [errorRenombrar, setErrorRenombrar] = useState('');
+  const [cargandoRenombre, setCargandoRenombre] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -666,7 +704,6 @@ export default function Dashboard() {
         const resRanking = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/ranking`);
         const dataRanking = await resRanking.json();
 
-        // NUEVO: Pedimos el historial para el gráfico
         const resHistorial = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/historial`);
         const dataHistorial = await resHistorial.json();
 
@@ -674,6 +711,15 @@ export default function Dashboard() {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const dataAlbum = await resAlbum.json();
+
+        const resMe = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (resMe.ok) {
+          const dataMe = await resMe.json();
+          setNombreUsuario(dataMe.nombre);
+          setPuedeCambiarNombre(!dataMe.cambio_nombre);
+        }
 
         // --- LÓGICA MÁGICA: Transformar datos crudos a líneas acumulativas por día ---
         const fechasSet = new Set();
@@ -795,7 +841,33 @@ export default function Dashboard() {
     }
   };
 
-
+  const guardarNuevoNombre = async (nuevoNombre) => {
+    setErrorRenombrar('');
+    setCargandoRenombre(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/renombrar`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ nuevoNombre })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setNombreUsuario(data.nuevoNombre);
+        localStorage.setItem('nombre_usuario', data.nuevoNombre);
+        setPuedeCambiarNombre(false);
+        setEditandoNombre(false);
+      } else {
+        setErrorRenombrar(data.mensaje || 'Error al cambiar el nombre');
+      }
+    } catch (e) {
+      setErrorRenombrar('Error de red al renombrar');
+    } finally {
+      setCargandoRenombre(false);
+    }
+  };
 
   const tabStyle = (activa) => ({
     padding: '10px 20px',
@@ -811,6 +883,15 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
+      {editandoNombre && (
+        <ModalRenombrar 
+          alCerrar={() => setEditandoNombre(false)} 
+          alGuardar={guardarNuevoNombre} 
+          errorMsg={errorRenombrar} 
+          clientName={clientName} 
+          loading={cargandoRenombre} 
+        />
+      )}
 
       {/* --- COLUMNA 1: EL RANKING (FIJA A LA IZQUIERDA) --- */}
       <div className="glass-panel sidebar">
@@ -846,7 +927,12 @@ export default function Dashboard() {
 
         <div className="header-top">
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <h1 style={{ margin: 0, fontSize: '28px', color: 'var(--text-main)' }}>🏆 Hola, {nombreUsuario}</h1>
+            <h1 style={{ margin: 0, fontSize: '28px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              🏆 Hola, {nombreUsuario}
+              {puedeCambiarNombre && (
+                <button onClick={() => setEditandoNombre(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', padding: '0 5px' }} title="Editar nombre de usuario">✏️</button>
+              )}
+            </h1>
           </div>
           <div className="header-buttons">
             <button onClick={() => setMostrarAyuda(true)} style={{ padding: '10px 20px', background: 'var(--success-color)', color: 'var(--text-main)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}>❔ Ayuda</button>
