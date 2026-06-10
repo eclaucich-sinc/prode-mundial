@@ -58,7 +58,7 @@ export default function Login() {
         <img src={logoSinc} alt="Logo Sinc" style={{ maxWidth: '300px', marginBottom: '15px' }} />
       )}
       <h1 style={{ color: 'var(--primary-color)', fontSize: '2rem', marginBottom: '10px' }}>
-        🏆 Prode Mundial 2026 {clientName !== 'Q21' && <><br /> {clientName}</>}
+        🏆 Prode Mundial 2026
       </h1>
       <p style={{ color: 'var(--text-muted)' }}>Iniciá sesión para hacer tus pronósticos</p>
 

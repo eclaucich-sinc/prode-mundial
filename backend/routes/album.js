@@ -5,7 +5,7 @@ const Figurita = require('../models/Figurita');
 const auth = require('../middleware/auth');
 
 const PUNTOS_POR_FIGURITA = 20;
-const TOTAL_FIGURITAS = 6;
+const TOTAL_FIGURITAS = 20;
 
 // Obtener info del álbum del usuario logueado
 router.get('/mias', auth, async (req, res) => {

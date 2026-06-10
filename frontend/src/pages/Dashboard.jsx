@@ -1012,7 +1012,7 @@ export default function Dashboard() {
               gap: '15px',
               marginTop: '20px'
             }}>
-              {Array.from({ length: 6 }, (_, i) => i + 1).map(num => {
+              {Array.from({ length: 20 }, (_, i) => i + 1).map(num => {
                 const laTengo = (albumInfo.figuritas || []).includes(num);
                 const infoCatalogo = albumInfo.catalogo?.find(f => f.numero === num);
                 const isFlipped = flippedStickers[num];
