@@ -16,7 +16,15 @@ app.use(cors());
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('⚽ ¡Conectado exitosamente a MongoDB!'))
+  .then(async () => {
+    console.log('⚽ ¡Conectado exitosamente a MongoDB!');
+    try {
+      await require('./models/Usuario').syncIndexes();
+      console.log('Índices de MongoDB sincronizados correctamente (nombre ya no es único, email/dni sí).');
+    } catch (e) {
+      console.warn('Advertencia al sincronizar índices:', e.message);
+    }
+  })
   .catch((error) => console.error('Error al conectar a MongoDB:', error));
 
 app.use('/api/auth', authRoutes);

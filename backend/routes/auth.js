@@ -18,10 +18,17 @@ router.post('/register', async (req, res) => {
       }
     }
 
-    // 1. Verificamos si el usuario ya existe
-    let usuarioExistente = await Usuario.findOne({ nombre });
-    if (usuarioExistente) {
-      return res.status(400).json({ mensaje: 'El nombre de usuario ya está registrado' });
+    // 1. Verificamos si ya existe alguien con ese DNI o Email (si los ingresaron)
+    if (email || dni) {
+      const query = [];
+      if (email) query.push({ email });
+      if (dni) query.push({ dni });
+
+      let usuarioExistente = await Usuario.findOne({ $or: query });
+      if (usuarioExistente) {
+        if (email && usuarioExistente.email === email) return res.status(400).json({ mensaje: 'El email ya está registrado' });
+        if (dni && usuarioExistente.dni === dni) return res.status(400).json({ mensaje: 'El DNI ya está registrado' });
+      }
     }
 
     // 2. Si el cliente es Q21, guardamos en texto plano (req del cliente). Si no, encriptamos.
@@ -42,6 +49,9 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ mensaje: 'Usuario registrado con éxito' });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ mensaje: 'El email o DNI ya están en uso' });
+    }
     res.status(500).json({ mensaje: 'Error en el servidor', error: error.message });
   }
 });
@@ -51,8 +61,14 @@ router.post('/login', async (req, res) => {
   try {
     const { nombre, password } = req.body;
 
-    // 1. Buscamos al usuario por nombre de usuario
-    const usuario = await Usuario.findOne({ nombre });
+    // 1. Buscamos al usuario por nombre, email o DNI
+    const usuario = await Usuario.findOne({ 
+      $or: [
+        { nombre },
+        { email: nombre },
+        { dni: nombre }
+      ]
+    });
     if (!usuario) {
       return res.status(400).json({ mensaje: 'Credenciales inválidas' });
     }
