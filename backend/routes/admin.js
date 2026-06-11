@@ -59,56 +59,60 @@ router.post('/resultado/:partido_id', auth, async (req, res) => {
     await partido.save();
 
     // 2.5. LÓGICA DE sinc(i): Generar la predicción del bot basado en las tendencias de la gente
-    let usuarioSincI = await Usuario.findOne({ nombre: 'sinc(i)' });
+    const isSincI = process.env.CLIENT_NAME === 'sinc(i)';
 
-    const modelosIA = ['Random1', 'Random2', 'Random3', 'Claude Sonnet 4.6', 'GPT-5.5', 'Qwen3.6', 'DeepSeek-V3', 'Gemini 3.1 Pro'];
-    const usuariosReales = await Usuario.find({ nombre: { $nin: modelosIA } });
-    const idsUsuariosReales = usuariosReales.map(u => u._id.toString());
+    if (isSincI) {
+      let usuarioSincI = await Usuario.findOne({ nombre: 'sinc(i)' });
 
-    let prediccionesReales = await Prediccion.find({ partido_id });
-    prediccionesReales = prediccionesReales.filter(p => idsUsuariosReales.includes(p.usuario_id.toString()));
+      const modelosIA = ['Random1', 'Random2', 'Random3', 'Claude Sonnet 4.6', 'GPT-5.5', 'Qwen3.6', 'DeepSeek-V3', 'Gemini 3.1 Pro'];
+      const usuariosReales = await Usuario.find({ nombre: { $nin: modelosIA } });
+      const idsUsuariosReales = usuariosReales.map(u => u._id.toString());
 
-    if (prediccionesReales.length > 0) {
-      let ganaLocal = [], ganaVisitante = [], empate = [];
+      let prediccionesReales = await Prediccion.find({ partido_id });
+      prediccionesReales = prediccionesReales.filter(p => idsUsuariosReales.includes(p.usuario_id.toString()));
 
-      for (const p of prediccionesReales) {
-        if (p.prediccion_goles_local > p.prediccion_goles_visitante) ganaLocal.push(p);
-        else if (p.prediccion_goles_local < p.prediccion_goles_visitante) ganaVisitante.push(p);
-        else empate.push(p);
+      if (prediccionesReales.length > 0 && usuarioSincI) {
+        let ganaLocal = [], ganaVisitante = [], empate = [];
+
+        for (const p of prediccionesReales) {
+          if (p.prediccion_goles_local > p.prediccion_goles_visitante) ganaLocal.push(p);
+          else if (p.prediccion_goles_local < p.prediccion_goles_visitante) ganaVisitante.push(p);
+          else empate.push(p);
+        }
+
+        let tendenciaGanadora = ganaLocal;
+        if (ganaVisitante.length > tendenciaGanadora.length) tendenciaGanadora = ganaVisitante;
+        if (empate.length > tendenciaGanadora.length) tendenciaGanadora = empate;
+
+        // Si hay empate en cantidades, nos quedamos con la tendenciaGanadora actual que ya se seteó (prioridad: Local -> Visitante -> Empate)
+
+        const calcularMediana = (arr) => {
+          if (arr.length === 0) return 0;
+          const sorted = [...arr].sort((a, b) => a - b);
+          const mid = Math.floor(sorted.length / 2);
+          return sorted.length % 2 !== 0 ? sorted[mid] : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+        };
+
+        const predLocales = tendenciaGanadora.map(p => p.prediccion_goles_local);
+        const predVisitantes = tendenciaGanadora.map(p => p.prediccion_goles_visitante);
+
+        const golesLocalSinc = calcularMediana(predLocales);
+        const golesVisitanteSinc = calcularMediana(predVisitantes);
+
+        let predSincI = await Prediccion.findOne({ usuario_id: usuarioSincI._id, partido_id });
+        if (!predSincI) {
+          predSincI = new Prediccion({
+            usuario_id: usuarioSincI._id,
+            partido_id,
+            prediccion_goles_local: golesLocalSinc,
+            prediccion_goles_visitante: golesVisitanteSinc
+          });
+        } else {
+          predSincI.prediccion_goles_local = golesLocalSinc;
+          predSincI.prediccion_goles_visitante = golesVisitanteSinc;
+        }
+        await predSincI.save();
       }
-
-      let tendenciaGanadora = ganaLocal;
-      if (ganaVisitante.length > tendenciaGanadora.length) tendenciaGanadora = ganaVisitante;
-      if (empate.length > tendenciaGanadora.length) tendenciaGanadora = empate;
-
-      // Si hay empate en cantidades, nos quedamos con la tendenciaGanadora actual que ya se seteó (prioridad: Local -> Visitante -> Empate)
-
-      const calcularMediana = (arr) => {
-        if (arr.length === 0) return 0;
-        const sorted = [...arr].sort((a, b) => a - b);
-        const mid = Math.floor(sorted.length / 2);
-        return sorted.length % 2 !== 0 ? sorted[mid] : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
-      };
-
-      const predLocales = tendenciaGanadora.map(p => p.prediccion_goles_local);
-      const predVisitantes = tendenciaGanadora.map(p => p.prediccion_goles_visitante);
-
-      const golesLocalSinc = calcularMediana(predLocales);
-      const golesVisitanteSinc = calcularMediana(predVisitantes);
-
-      let predSincI = await Prediccion.findOne({ usuario_id: usuarioSincI._id, partido_id });
-      if (!predSincI) {
-        predSincI = new Prediccion({
-          usuario_id: usuarioSincI._id,
-          partido_id,
-          prediccion_goles_local: golesLocalSinc,
-          prediccion_goles_visitante: golesVisitanteSinc
-        });
-      } else {
-        predSincI.prediccion_goles_local = golesLocalSinc;
-        predSincI.prediccion_goles_visitante = golesVisitanteSinc;
-      }
-      await predSincI.save();
     }
 
     // 3. Buscamos TODAS las predicciones que la gente hizo para este partido (incluida la nueva de sinc(i))
