@@ -684,6 +684,7 @@ export default function Dashboard() {
   const [editandoNombre, setEditandoNombre] = useState(false);
   const [errorRenombrar, setErrorRenombrar] = useState('');
   const [cargandoRenombre, setCargandoRenombre] = useState(false);
+  const [estadisticasPartidos, setEstadisticasPartidos] = useState([]);
 
   useEffect(() => {
     if (!token) {
@@ -719,6 +720,11 @@ export default function Dashboard() {
           const dataMe = await resMe.json();
           setNombreUsuario(dataMe.nombre);
           setPuedeCambiarNombre(!dataMe.cambio_nombre);
+        }
+
+        const resEstadisticas = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/partidos/estadisticas`);
+        if (resEstadisticas.ok) {
+          setEstadisticasPartidos(await resEstadisticas.json());
         }
 
         // --- LÓGICA MÁGICA: Transformar datos crudos a líneas acumulativas por día ---
@@ -1062,6 +1068,42 @@ export default function Dashboard() {
                   </ResponsiveContainer>
                 </div>
               </>
+            )}
+
+            {estadisticasPartidos.length > 0 && (
+              <div style={{ marginTop: '40px' }}>
+                <h3 style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--primary-color)' }}>Estadísticas por Partido</h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', fontSize: '14px' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid var(--card-border)' }}>
+                        <th style={{ padding: '10px', textAlign: 'left' }}>Partido</th>
+                        <th style={{ padding: '10px' }}>Resultado</th>
+                        <th style={{ padding: '10px' }}>Predicciones</th>
+                        <th style={{ padding: '10px' }}>Promedio Pts</th>
+                        <th style={{ padding: '10px' }}>Puntaje Máx</th>
+                        <th style={{ padding: '10px' }}>Acertaron Exacto</th>
+                        <th style={{ padding: '10px' }}>Acertaron Tendencia</th>
+                        <th style={{ padding: '10px' }}>Cero Puntos</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {estadisticasPartidos.map(est => (
+                        <tr key={est.partido_id} style={{ borderBottom: '1px solid var(--card-border)' }}>
+                          <td style={{ padding: '10px', textAlign: 'left', fontWeight: 'bold' }}>{est.equipo_local} vs {est.equipo_visitante}</td>
+                          <td style={{ padding: '10px', color: 'var(--primary-color)' }}>{est.resultado_real.goles_local} - {est.resultado_real.goles_visitante}</td>
+                          <td style={{ padding: '10px' }}>{est.totalPreds}</td>
+                          <td style={{ padding: '10px', fontWeight: 'bold' }}>{est.promedioPuntos}</td>
+                          <td style={{ padding: '10px', color: 'var(--success-color)' }}>{est.maxPuntos}</td>
+                          <td style={{ padding: '10px' }}>{est.aciertosExactos}</td>
+                          <td style={{ padding: '10px' }}>{est.aciertosTendencia}</td>
+                          <td style={{ padding: '10px', color: 'var(--danger-color)' }}>{est.ceros}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </div>
         )}
