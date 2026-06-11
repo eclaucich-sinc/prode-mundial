@@ -525,6 +525,9 @@ const TablaPosiciones = ({ partidos, misPredicciones }) => {
               <th style={{ padding: '8px', textAlign: 'left' }}>Equipo</th>
               <th style={{ padding: '8px' }}>Pts</th>
               <th style={{ padding: '8px' }}>PJ</th>
+              <th style={{ padding: '8px' }}>G</th>
+              <th style={{ padding: '8px' }}>E</th>
+              <th style={{ padding: '8px' }}>P</th>
               <th style={{ padding: '8px' }}>GF</th>
               <th style={{ padding: '8px' }}>GC</th>
               <th style={{ padding: '8px' }}>DIF</th>
@@ -539,6 +542,9 @@ const TablaPosiciones = ({ partidos, misPredicciones }) => {
                 </td>
                 <td style={{ padding: '8px', fontWeight: 'bold', color: 'var(--primary-color)' }}>{eq.pts}</td>
                 <td style={{ padding: '8px' }}>{eq.pj}</td>
+                <td style={{ padding: '8px', color: 'var(--success-color)' }}>{eq.pg}</td>
+                <td style={{ padding: '8px', color: '#ffc658' }}>{eq.pe}</td>
+                <td style={{ padding: '8px', color: 'var(--danger-color)' }}>{eq.pp}</td>
                 <td style={{ padding: '8px' }}>{eq.gf}</td>
                 <td style={{ padding: '8px' }}>{eq.gc}</td>
                 <td style={{ padding: '8px' }}>{eq.gf - eq.gc > 0 ? `+${eq.gf - eq.gc}` : eq.gf - eq.gc}</td>
