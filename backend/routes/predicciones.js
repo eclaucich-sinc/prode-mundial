@@ -16,6 +16,7 @@ router.post('/', auth, async (req, res) => {
 
     const ahora = new Date();
     const partidoObj = new Date(partido.fecha_hora);
+    partidoObj.setHours(partidoObj.getHours() + 3); // Ajuste de zona horaria UTC-3 (Argentina)
 
     if (ahora >= partidoObj) {
       return res.status(403).json({ mensaje: 'Ya no puedes hacer predicciones para este partido. El partido ya comenzó.' });
