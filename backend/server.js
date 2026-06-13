@@ -20,7 +20,8 @@ mongoose.connect(process.env.MONGO_URI)
     console.log('⚽ ¡Conectado exitosamente a MongoDB!');
     try {
       await require('./models/Usuario').syncIndexes();
-      console.log('Índices de MongoDB sincronizados correctamente (nombre ya no es único, email/dni sí).');
+      await require('./models/Prediccion').syncIndexes();
+      console.log('Índices de MongoDB sincronizados correctamente.');
     } catch (e) {
       console.warn('Advertencia al sincronizar índices:', e.message);
     }

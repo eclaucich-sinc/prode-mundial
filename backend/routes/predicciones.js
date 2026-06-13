@@ -21,24 +21,20 @@ router.post('/', auth, async (req, res) => {
       return res.status(403).json({ mensaje: 'Ya no puedes hacer predicciones para este partido. El partido ya comenzó.' });
     }
 
-    // Buscamos si el usuario ya había hecho una predicción para este partido
-    let prediccion = await Prediccion.findOne({ usuario_id, partido_id });
+    // Usamos findOneAndUpdate con upsert para evitar race conditions si el usuario hace doble click rápido
+    const prediccion = await Prediccion.findOneAndUpdate(
+      { usuario_id, partido_id }, // Criterio de búsqueda
+      { 
+        prediccion_goles_local, 
+        prediccion_goles_visitante 
+      }, // Valores a actualizar o insertar
+      { 
+        new: true, // Devuelve el documento ya actualizado
+        upsert: true, // Si no existe, lo crea
+        setDefaultsOnInsert: true // Aplica los defaults (como puntos_ganados: null)
+      }
+    );
 
-    if (prediccion) {
-      // Si ya existía, simplemente la actualizamos (por si cambió de opinión antes del partido)
-      prediccion.prediccion_goles_local = prediccion_goles_local;
-      prediccion.prediccion_goles_visitante = prediccion_goles_visitante;
-    } else {
-      // Si no existía, creamos una nueva
-      prediccion = new Prediccion({
-        usuario_id,
-        partido_id,
-        prediccion_goles_local,
-        prediccion_goles_visitante
-      });
-    }
-
-    await prediccion.save();
     res.json({ mensaje: 'Predicción guardada exitosamente', prediccion });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al guardar la predicción', error: error.message });
