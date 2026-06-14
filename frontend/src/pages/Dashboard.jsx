@@ -1182,7 +1182,7 @@ export default function Dashboard() {
                         overflow: 'hidden'
                       }}>
                         {laTengo && infoCatalogo && infoCatalogo.img_frente ? (
-                          <img src={infoCatalogo.img_frente} alt={`Frente ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <img src={`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}${infoCatalogo.img_frente}`} alt={`Frente ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
                           <>
                             <div style={{ position: 'absolute', top: '5px', left: '5px', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)' }}>#{num}</div>
@@ -1216,7 +1216,7 @@ export default function Dashboard() {
                         overflow: 'hidden'
                       }}>
                         {laTengo && infoCatalogo && infoCatalogo.img_dorso ? (
-                          <img src={infoCatalogo.img_dorso} alt={`Dorso ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <img src={`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}${infoCatalogo.img_dorso}`} alt={`Dorso ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
                           <div style={{ textAlign: 'center', color: 'var(--text-main)' }}>
                             <span style={{ fontSize: '30px' }}>🔙</span>

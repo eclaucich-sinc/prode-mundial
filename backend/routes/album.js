@@ -23,9 +23,8 @@ router.get('/mias', auth, async (req, res) => {
       return {
         numero: f.numero,
         nombre: f.nombre,
-        // Convert binary buffer to base64 if exists
-        img_frente: f.img_frente ? `data:image/png;base64,${f.img_frente.toString('base64')}` : null,
-        img_dorso: f.img_dorso ? `data:image/png;base64,${f.img_dorso.toString('base64')}` : null
+        img_frente: f.img_frente ? `/api/album/imagen/${f.numero}/frente` : null,
+        img_dorso: f.img_dorso ? `/api/album/imagen/${f.numero}/dorso` : null
       };
     });
 
@@ -77,6 +76,28 @@ router.post('/comprar', auth, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al comprar la figurita' });
+  }
+});
+
+// RUTA: Obtener imagen de una figurita (frente o dorso)
+router.get('/imagen/:numero/:lado', async (req, res) => {
+  try {
+    const { numero, lado } = req.params;
+    const figurita = await Figurita.findOne({ numero: Number(numero) });
+
+    if (!figurita) return res.status(404).send('Figurita no encontrada');
+
+    let buffer;
+    if (lado === 'frente' && figurita.img_frente) buffer = figurita.img_frente;
+    else if (lado === 'dorso' && figurita.img_dorso) buffer = figurita.img_dorso;
+
+    if (!buffer) return res.status(404).send('Imagen no encontrada');
+
+    res.set('Content-Type', 'image/png');
+    res.set('Cache-Control', 'public, max-age=2592000'); // Cache for 30 days
+    res.send(buffer);
+  } catch (error) {
+    res.status(500).send('Error al cargar la imagen');
   }
 });
 
