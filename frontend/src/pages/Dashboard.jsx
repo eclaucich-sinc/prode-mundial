@@ -700,25 +700,32 @@ export default function Dashboard() {
 
     const cargarDatos = async () => {
       try {
+        console.log("Iniciando carga de datos...");
+        console.log("Fetching partidos...");
         const resPartidos = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/partidos`);
         const dataPartidos = await resPartidos.json();
 
+        console.log("Fetching mis predicciones...");
         const resPredicciones = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/predicciones/mias`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const dataPredicciones = await resPredicciones.json();
 
+        console.log("Fetching ranking...");
         const resRanking = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/ranking`);
         const dataRanking = await resRanking.json();
 
+        console.log("Fetching historial...");
         const resHistorial = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/historial`);
         const dataHistorial = await resHistorial.json();
 
+        console.log("Fetching album...");
         const resAlbum = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/album/mias`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const dataAlbum = await resAlbum.json();
 
+        console.log("Fetching me...");
         const resMe = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -728,11 +735,13 @@ export default function Dashboard() {
           setPuedeCambiarNombre(!dataMe.cambio_nombre);
         }
 
+        console.log("Fetching estadisticas...");
         const resEstadisticas = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/partidos/estadisticas`);
         if (resEstadisticas.ok) {
           setEstadisticasPartidos(await resEstadisticas.json());
         }
 
+        console.log("Procesando datos del gráfico...");
         // --- LÓGICA MÁGICA: Transformar datos crudos a líneas acumulativas por día ---
         const fechasSet = new Set();
         dataHistorial.forEach(item => {
@@ -768,13 +777,16 @@ export default function Dashboard() {
         setDatosGrafico({ data: dataFormateada, usuarios: todosLosUsuarios });
         // -------------------------------------------------------------------------
 
+        console.log("Aplicando estados...");
         if (resPartidos.ok) setPartidos(dataPartidos);
         if (resPredicciones.ok) setMisPredicciones(dataPredicciones.predicciones || dataPredicciones);
         if (resRanking.ok) setRanking(dataRanking);
         if (resAlbum.ok) setAlbumInfo({ puntosDisponibles: dataAlbum.puntosDisponibles, figuritas: dataAlbum.figuritas, catalogo: dataAlbum.catalogo });
+        console.log("Carga de datos finalizada con éxito.");
       } catch (error) {
         console.error('Error al cargar datos:', error);
       } finally {
+        console.log("Ocultando loading...");
         setCargando(false);
       }
     };
