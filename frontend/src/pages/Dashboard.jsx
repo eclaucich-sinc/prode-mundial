@@ -719,11 +719,11 @@ export default function Dashboard() {
         const resHistorial = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/historial`);
         const dataHistorial = await resHistorial.json();
 
-        console.log("Fetching album...");
-        const resAlbum = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/album/mias`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const dataAlbum = await resAlbum.json();
+        // console.log("Fetching album...");
+        // const resAlbum = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/album/mias`, {
+        //   headers: { 'Authorization': `Bearer ${token}` }
+        // });
+        // const dataAlbum = await resAlbum.json();
 
         console.log("Fetching me...");
         const resMe = await fetch(`${import.meta.env.VITE_API_URL || 'https://prode-mundial-t3nt.onrender.com'}/api/usuarios/me`, {
@@ -781,7 +781,7 @@ export default function Dashboard() {
         if (resPartidos.ok) setPartidos(dataPartidos);
         if (resPredicciones.ok) setMisPredicciones(dataPredicciones.predicciones || dataPredicciones);
         if (resRanking.ok) setRanking(dataRanking);
-        if (resAlbum.ok) setAlbumInfo({ puntosDisponibles: dataAlbum.puntosDisponibles, figuritas: dataAlbum.figuritas, catalogo: dataAlbum.catalogo });
+        // if (resAlbum.ok) setAlbumInfo({ puntosDisponibles: dataAlbum.puntosDisponibles, figuritas: dataAlbum.figuritas, catalogo: dataAlbum.catalogo });
         console.log("Carga de datos finalizada con éxito.");
       } catch (error) {
         console.error('Error al cargar datos:', error);
@@ -989,11 +989,13 @@ export default function Dashboard() {
             📈 Estadísticas
           </button>
 
+          {/*
           {clientName === 'sinc(i)' && (
             <button style={tabStyle(tabActiva === 'album')} onClick={() => setTabActiva('album')}>
               📔 Álbum (próximamente...)
             </button>
           )}
+          */}
         </div>
 
         {/* CONTENIDO DE LA PESTAÑA: HOY */}
