@@ -255,15 +255,9 @@ router.post('/bonus/:grupo', auth, async (req, res) => {
 
       if (bonusSumados > 0) {
         usuario.puntos_totales += bonusSumados;
-        usuario[`bonus_${grupo}`] = bonusSumados; // Guardamos el bonus por grupo
+        const nombreGrupo = grupo.replace('Grupo ', '');
+        usuario.set(`bonus_${nombreGrupo}`, bonusSumados); // Guardamos el bonus por grupo (usando .set() para propiedades dinámicas)
         await usuario.save();
-
-        // Actualizamos los puntos ganados de la última predicción del grupo
-        const ultimaPred = predsUsuario[predsUsuario.length - 1];
-        if (ultimaPred) {
-          ultimaPred.puntos_ganados = (ultimaPred.puntos_ganados || 0) + bonusSumados;
-          await ultimaPred.save();
-        }
       }
     }
 

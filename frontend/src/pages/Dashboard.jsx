@@ -567,7 +567,8 @@ const TablaPosiciones = ({ partidos, misPredicciones }) => {
 const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved, userData }) => {
   const [expandido, setExpandido] = useState(false);
 
-  const bonusGrupo = userData ? userData[`bonus_${fase}`] : 0;
+  const nombreGrupo = fase.replace('Grupo ', '');
+  const bonusGrupo = userData ? userData[`bonus_${nombreGrupo}`] : 0;
 
   return (
     <div className="glass-panel" style={{ marginBottom: '30px', padding: '20px' }}>
