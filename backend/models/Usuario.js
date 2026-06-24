@@ -10,6 +10,6 @@ const usuarioSchema = new mongoose.Schema({
   dni: { type: String, required: false, unique: true, sparse: true },
   cambio_nombre: { type: Boolean, default: false },
   rol: { type: String, default: 'user' }
-});
+}, { strict: false });
 
 module.exports = mongoose.model('Usuario', usuarioSchema);

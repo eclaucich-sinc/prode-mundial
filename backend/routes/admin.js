@@ -255,6 +255,7 @@ router.post('/bonus/:grupo', auth, async (req, res) => {
 
       if (bonusSumados > 0) {
         usuario.puntos_totales += bonusSumados;
+        usuario[`bonus_${grupo}`] = bonusSumados; // Guardamos el bonus por grupo
         await usuario.save();
 
         // Actualizamos los puntos ganados de la última predicción del grupo

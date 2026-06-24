@@ -8,9 +8,9 @@ const auth = require('../middleware/auth');
 // RUTA: Obtener mi usuario
 router.get('/me', auth, async (req, res) => {
   try {
-    const usuario = await Usuario.findById(req.usuario.id);
+    const usuario = await Usuario.findById(req.usuario.id).select('-password');
     if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-    res.json({ id: usuario._id, nombre: usuario.nombre, cambio_nombre: usuario.cambio_nombre });
+    res.json(usuario);
   } catch (err) {
     res.status(500).json({ mensaje: 'Error al obtener usuario', error: err.message });
   }

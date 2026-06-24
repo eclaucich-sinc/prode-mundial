@@ -564,8 +564,10 @@ const TablaPosiciones = ({ partidos, misPredicciones }) => {
   );
 };
 
-const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved }) => {
+const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved, userData }) => {
   const [expandido, setExpandido] = useState(false);
+
+  const bonusGrupo = userData ? userData[`bonus_${fase}`] : 0;
 
   return (
     <div className="glass-panel" style={{ marginBottom: '30px', padding: '20px' }}>
@@ -576,9 +578,16 @@ const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved })
         <h3 style={{ margin: 0, color: 'var(--primary-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '16px', color: 'var(--text-muted)', transition: 'transform 0.2s' }}>{expandido ? '▼' : '▶'}</span> {fase}
         </h3>
-        <span style={{ background: 'rgba(34, 197, 94, 0.2)', color: 'var(--success-color)', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
-          Puntos sumados: {dataFase.puntosAcumulados}
-        </span>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <span style={{ background: 'rgba(34, 197, 94, 0.2)', color: 'var(--success-color)', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
+            Puntos sumados: {dataFase.puntosAcumulados}
+          </span>
+          {bonusGrupo > 0 && (
+            <span style={{ background: 'rgba(234, 179, 8, 0.2)', color: 'var(--warning-color)', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
+              + bonus ganado: {bonusGrupo}
+            </span>
+          )}
+        </div>
       </div>
 
       {expandido && (
@@ -685,6 +694,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem('nombre_usuario') || 'Jugador');
+  const [userData, setUserData] = useState(null);
   const rolUsuario = localStorage.getItem('rol_usuario') || 'user';
   const [puedeCambiarNombre, setPuedeCambiarNombre] = useState(false);
   const [editandoNombre, setEditandoNombre] = useState(false);
@@ -732,6 +742,7 @@ export default function Dashboard() {
         if (resMe.ok) {
           const dataMe = await resMe.json();
           setNombreUsuario(dataMe.nombre);
+          setUserData(dataMe);
           setPuedeCambiarNombre(!dataMe.cambio_nombre);
         }
 
@@ -1024,7 +1035,7 @@ export default function Dashboard() {
               <p style={{ textAlign: 'center' }}>No hay partidos cargados en el fixture.</p>
             ) : (
               Object.keys(fixtureAgrupado).sort().map(fase => (
-                <FaseCard key={fase} fase={fase} dataFase={fixtureAgrupado[fase]} misPredicciones={misPredicciones} token={token} onPredictionSaved={handlePredictionSaved} />
+                <FaseCard key={fase} fase={fase} dataFase={fixtureAgrupado[fase]} misPredicciones={misPredicciones} token={token} onPredictionSaved={handlePredictionSaved} userData={userData} />
               ))
             )}
           </div>
