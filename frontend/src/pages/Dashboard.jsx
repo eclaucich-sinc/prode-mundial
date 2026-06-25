@@ -570,6 +570,16 @@ const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved, u
   const nombreGrupo = fase.replace('Grupo ', '');
   const bonusGrupo = userData ? userData[`bonus_${nombreGrupo}`] : 0;
 
+  let maxPosibleEliminatoria = 0;
+  if (!fase.toLowerCase().includes('grupo')) {
+    let multiplicador = 1;
+    if (fase === '8avos') multiplicador = 2;
+    else if (fase === '4tos') multiplicador = 4;
+    else if (fase === 'Semifinal') multiplicador = 8;
+    else if (fase === 'Tercer Puesto' || fase === 'Final') multiplicador = 16;
+    maxPosibleEliminatoria = dataFase.partidos.length * (5 * multiplicador);
+  }
+
   return (
     <div className="glass-panel" style={{ marginBottom: '30px', padding: '20px' }}>
       <div
@@ -581,7 +591,7 @@ const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved, u
         </h3>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span style={{ background: 'rgba(34, 197, 94, 0.2)', color: 'var(--success-color)', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
-            Puntos sumados: {dataFase.puntosAcumulados}
+            Puntos sumados: {dataFase.puntosAcumulados} {maxPosibleEliminatoria > 0 && `/ Máx: ${maxPosibleEliminatoria}`}
           </span>
           {bonusGrupo > 0 && (
             <span style={{ background: 'rgba(234, 179, 8, 0.2)', color: 'var(--warning-color)', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
@@ -1055,6 +1065,10 @@ export default function Dashboard() {
         {/* CONTENIDO DE LA PESTAÑA: ELIMINATORIA */}
         {tabActiva === 'eliminatoria' && (
           <div>
+            <div style={{ padding: '15px', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderLeft: '4px solid #3b82f6', borderRadius: '4px', marginBottom: '20px', fontSize: '14px' }}>
+              <strong>ℹ️ Sistema de Puntos Eliminatorios:</strong> La base por partido es de <strong>5 puntos</strong> (exacto) y <strong>3 puntos</strong> (tendencia). 
+              A medida que avanzás de ronda, los puntos se duplican (Octavos x2, Cuartos x4, etc.) para que el total en juego se mantenga constante. ¡En esta fase no hay bonus!
+            </div>
             {Object.keys(fixtureAgrupado).filter(f => !f.startsWith('Grupo')).length === 0 ? (
               <p style={{ textAlign: 'center', padding: '40px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px' }}>No hay cruces de eliminación definidos aún.</p>
             ) : (

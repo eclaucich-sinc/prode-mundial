@@ -118,6 +118,13 @@ router.post('/resultado/:partido_id', auth, async (req, res) => {
     // 3. Buscamos TODAS las predicciones que la gente hizo para este partido (incluida la nueva de sinc(i))
     const predicciones = await Prediccion.find({ partido_id });
 
+    // Determinar multiplicador por fase eliminatoria
+    let multiplicador = 1;
+    if (partido.grupo_o_fase === '8avos') multiplicador = 2;
+    else if (partido.grupo_o_fase === '4tos') multiplicador = 4;
+    else if (partido.grupo_o_fase === 'Semifinal') multiplicador = 8;
+    else if (partido.grupo_o_fase === 'Tercer Puesto' || partido.grupo_o_fase === 'Final') multiplicador = 16;
+
     // 4. EL MOTOR DE CÁLCULO: Evaluamos predicción por predicción
     for (let pred of predicciones) {
       let puntosSumados = 0;
@@ -127,13 +134,13 @@ router.post('/resultado/:partido_id', auth, async (req, res) => {
 
       // --- Puntos por Resultado ---
       if (pred.prediccion_goles_local === goles_local && pred.prediccion_goles_visitante === goles_visitante) {
-        puntosSumados += 5; // Acertó el resultado exacto
+        puntosSumados += 5 * multiplicador; // Acertó el resultado exacto
       } else if (
         (difReal > 0 && difPred > 0) || // Acertó que ganaba el local
         (difReal < 0 && difPred < 0) || // Acertó que ganaba el visitante
         (difReal === 0 && difPred === 0) // Acertó que era empate
       ) {
-        puntosSumados += 3; // Acertó la tendencia (ganador o empate)
+        puntosSumados += 3 * multiplicador; // Acertó la tendencia (ganador o empate)
       }
 
 
