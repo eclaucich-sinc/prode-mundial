@@ -5,6 +5,7 @@ const partidoSchema = new mongoose.Schema({
   equipo_visitante: { type: String, required: true },
   fecha_hora: { type: Date, required: true },
   grupo_o_fase: { type: String, required: true },
+  numero_partido: { type: Number, required: false },
   estado: { type: String, enum: ['pendiente', 'finalizado'], default: 'pendiente' },
   // Estos campos se llenan cuando el partido termina
   resultado_real: {

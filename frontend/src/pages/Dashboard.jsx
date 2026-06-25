@@ -997,6 +997,9 @@ export default function Dashboard() {
             📋 Fixture
           </button>
 
+          <button style={tabStyle(tabActiva === 'eliminatoria')} onClick={() => setTabActiva('eliminatoria')}>
+            ⚔️ Eliminatoria
+          </button>
           <button style={tabStyle(tabActiva === 'estadisticas')} onClick={() => setTabActiva('estadisticas')}>
             📈 Estadísticas
           </button>
@@ -1028,16 +1031,43 @@ export default function Dashboard() {
 
 
 
-        {/* CONTENIDO DE LA PESTAÑA: FIXTURE */}
+        {/* CONTENIDO DE LA PESTAÑA: FIXTURE (Sólo Fase de Grupos) */}
         {tabActiva === 'fixture' && (
-          /* ... (Todo el contenido de fixture queda igual que el mensaje anterior) ... */
           <div>
-            {Object.keys(fixtureAgrupado).length === 0 ? (
-              <p style={{ textAlign: 'center' }}>No hay partidos cargados en el fixture.</p>
+            {Object.keys(fixtureAgrupado).filter(f => f.startsWith('Grupo')).length === 0 ? (
+              <p style={{ textAlign: 'center' }}>No hay partidos cargados en la fase de grupos.</p>
             ) : (
-              Object.keys(fixtureAgrupado).sort().map(fase => (
-                <FaseCard key={fase} fase={fase} dataFase={fixtureAgrupado[fase]} misPredicciones={misPredicciones} token={token} onPredictionSaved={handlePredictionSaved} userData={userData} />
-              ))
+              Object.keys(fixtureAgrupado)
+                .filter(fase => fase.startsWith('Grupo'))
+                .sort()
+                .map(fase => {
+                  // Ordenamos los partidos dentro de la fase por fecha o número
+                  const dataFase = fixtureAgrupado[fase];
+                  dataFase.partidos.sort((a, b) => (a.numero_partido || 0) - (b.numero_partido || 0) || new Date(a.fecha_hora) - new Date(b.fecha_hora));
+                  return (
+                    <FaseCard key={fase} fase={fase} dataFase={dataFase} misPredicciones={misPredicciones} token={token} onPredictionSaved={handlePredictionSaved} userData={userData} />
+                  );
+                })
+            )}
+          </div>
+        )}
+
+        {/* CONTENIDO DE LA PESTAÑA: ELIMINATORIA */}
+        {tabActiva === 'eliminatoria' && (
+          <div>
+            {Object.keys(fixtureAgrupado).filter(f => !f.startsWith('Grupo')).length === 0 ? (
+              <p style={{ textAlign: 'center', padding: '40px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px' }}>No hay cruces de eliminación definidos aún.</p>
+            ) : (
+              ['16avos', '8avos', '4tos', 'Semifinal', 'Tercer Puesto', 'Final'].map(fase => {
+                if (!fixtureAgrupado[fase]) return null;
+                const dataFase = fixtureAgrupado[fase];
+                // Ordenar por número de partido para mantener la estructura del cuadro
+                dataFase.partidos.sort((a, b) => (a.numero_partido || 0) - (b.numero_partido || 0));
+                
+                return (
+                  <FaseCard key={fase} fase={fase} dataFase={dataFase} misPredicciones={misPredicciones} token={token} onPredictionSaved={handlePredictionSaved} userData={userData} />
+                );
+              })
             )}
           </div>
         )}

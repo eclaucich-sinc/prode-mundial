@@ -105,7 +105,7 @@ const PartidoAdminCard = ({ partido, token }) => {
 const fasesTorneo = [
   'Grupo A', 'Grupo B', 'Grupo C', 'Grupo D', 'Grupo E', 'Grupo F',
   'Grupo G', 'Grupo H', 'Grupo I', 'Grupo J', 'Grupo K', 'Grupo L',
-  '32avos', '16avos', '8avos', '4tos', 'Semifinal', 'Tercer Puesto', 'Final'
+  '16avos', '8avos', '4tos', 'Semifinal', 'Tercer Puesto', 'Final'
 ];
 
 // Todos los equipos del mundial
@@ -125,6 +125,7 @@ export default function Admin() {
   const [nuevoLocal, setNuevoLocal] = useState(''); // Arranca con el primer equipo del listado
   const [nuevoVisitante, setNuevoVisitante] = useState(''); // Arranca con el segundo equipo del listado
   const [nuevoGrupo, setNuevoGrupo] = useState(''); // Ahora se llenará con el Select
+  const [nuevoNumeroPartido, setNuevoNumeroPartido] = useState(''); // NUEVO: Número de partido opcional
   const [nuevaFecha, setNuevaFecha] = useState('');
   const [nuevaHora, setNuevaHora] = useState('');
   const [mensajeCreacion, setMensajeCreacion] = useState('');
@@ -191,6 +192,7 @@ export default function Admin() {
           equipo_local: nuevoLocal,
           equipo_visitante: nuevoVisitante,
           grupo_o_fase: nuevoGrupo,
+          numero_partido: nuevoNumeroPartido ? parseInt(nuevoNumeroPartido) : undefined,
           fecha_hora: fechaHora
         })
       });
@@ -275,8 +277,17 @@ export default function Admin() {
               ))}
             </select>
           </div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label style={{ fontWeight: 'bold', marginBottom: '5px' }}>Número de Partido (Opcional):</label>
+            <input 
+              type="number" 
+              value={nuevoNumeroPartido} 
+              onChange={(e) => setNuevoNumeroPartido(e.target.value)} 
+              placeholder="Ej: 49"
+              style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }} 
+            />
+          </div>
           <div style={{ display: 'flex', gap: '10px' }}>
-            {/* El input libre ahora es un SELECT desplegable */}
             <select
               required
               value={nuevoGrupo}
