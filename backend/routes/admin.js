@@ -260,12 +260,10 @@ router.post('/bonus/:grupo', auth, async (req, res) => {
         bonusSumados += 4 * X;
       }
 
-      if (bonusSumados > 0) {
-        usuario.puntos_totales += bonusSumados;
-        const nombreGrupo = grupo.replace('Grupo ', '');
-        usuario.set(`bonus_${nombreGrupo}`, bonusSumados); // Guardamos el bonus por grupo (usando .set() para propiedades dinámicas)
-        await usuario.save();
-      }
+      usuario.puntos_totales += bonusSumados;
+      const nombreGrupo = grupo.replace('Grupo ', '');
+      usuario.set(`bonus_${nombreGrupo}`, bonusSumados); // Guardamos el bonus por grupo (usando .set() para propiedades dinámicas)
+      await usuario.save();
     }
 
     // Set flag so we don't calculate again
