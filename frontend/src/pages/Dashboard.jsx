@@ -915,6 +915,46 @@ export default function Dashboard() {
     }
   };
 
+  const getBonusStats = () => {
+    const stats = {};
+    const posiblesValores = [0, 5, 10, 20, 25, 30, 50];
+    
+    // Buscar qué grupos tienen bonus cargado buscando las keys que empiezan con 'bonus_' en cualquier usuario
+    const gruposConBonusSet = new Set();
+    ranking.forEach(user => {
+      Object.keys(user).forEach(key => {
+        if (key.startsWith('bonus_')) {
+          gruposConBonusSet.add(key.replace('bonus_', ''));
+        }
+      });
+    });
+
+    const gruposOrdenados = Array.from(gruposConBonusSet).sort();
+
+    gruposOrdenados.forEach(grupo => {
+      const valores = [];
+      const conteo = { 0:0, 5:0, 10:0, 20:0, 25:0, 30:0, 50:0 };
+      
+      ranking.forEach(user => {
+        const val = user[`bonus_${grupo}`];
+        if (val !== undefined && val !== null) {
+          valores.push(val);
+          if (conteo[val] !== undefined) conteo[val]++;
+        }
+      });
+
+      if (valores.length > 0) {
+        const max = Math.max(...valores);
+        const avg = (valores.reduce((a,b) => a+b, 0) / valores.length).toFixed(1);
+        stats[grupo] = { max, avg, conteo };
+      }
+    });
+
+    return { stats, gruposOrdenados, posiblesValores };
+  };
+
+  const { stats: bonusStats, gruposOrdenados: gruposConBonus, posiblesValores } = getBonusStats();
+
   const tabStyle = (activa) => ({
     padding: '10px 20px',
     cursor: 'pointer',
@@ -1176,6 +1216,44 @@ export default function Dashboard() {
                           <td style={{ padding: '10px', color: 'var(--danger-color)' }}>{est.ceros}</td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {gruposConBonus.length > 0 && (
+              <div style={{ marginTop: '40px' }}>
+                <h3 style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--primary-color)' }}>Estadísticas de Bonus por Grupo</h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', fontSize: '14px' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid var(--card-border)' }}>
+                        <th style={{ padding: '10px', textAlign: 'left' }}>Grupo</th>
+                        <th style={{ padding: '10px' }}>Puntaje Máx</th>
+                        <th style={{ padding: '10px' }}>Promedio</th>
+                        {posiblesValores.map(val => (
+                          <th key={val} style={{ padding: '10px' }}>{val} pts</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {gruposConBonus.map(grupo => {
+                        const est = bonusStats[grupo];
+                        if (!est) return null;
+                        return (
+                          <tr key={grupo} style={{ borderBottom: '1px solid var(--card-border)' }}>
+                            <td style={{ padding: '10px', textAlign: 'left', fontWeight: 'bold' }}>{grupo}</td>
+                            <td style={{ padding: '10px', color: 'var(--success-color)', fontWeight: 'bold' }}>{est.max}</td>
+                            <td style={{ padding: '10px', fontWeight: 'bold' }}>{est.avg}</td>
+                            {posiblesValores.map(val => (
+                              <td key={val} style={{ padding: '10px', color: est.conteo[val] > 0 ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                                {est.conteo[val]}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

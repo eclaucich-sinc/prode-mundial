@@ -43,8 +43,8 @@ router.put('/renombrar', auth, async (req, res) => {
 // RUTA: Obtener el ranking ordenado de mayor a menor
 router.get('/ranking', async (req, res) => {
   try {
-    // Buscamos todos los usuarios, traemos solo su nombre y puntos, y ordenamos (-1 es descendente)
-    const ranking = await Usuario.find({}, 'nombre puntos_totales').sort({ puntos_totales: -1 });
+    // Buscamos todos los usuarios, traemos todos sus campos (incluyendo los bonus_X dinámicos) excepto la contraseña, y ordenamos (-1 es descendente)
+    const ranking = await Usuario.find().select('-password').sort({ puntos_totales: -1 });
     res.json(ranking);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener el ranking', error: error.message });
