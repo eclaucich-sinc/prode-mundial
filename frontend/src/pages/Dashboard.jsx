@@ -918,7 +918,7 @@ export default function Dashboard() {
   const getBonusStats = () => {
     const stats = {};
     const posiblesValores = [0, 5, 10, 20, 25, 30, 50];
-    
+
     // Buscar qué grupos tienen bonus cargado buscando las keys que empiezan con 'bonus_' en cualquier usuario
     const gruposConBonusSet = new Set();
     ranking.forEach(user => {
@@ -933,8 +933,8 @@ export default function Dashboard() {
 
     gruposOrdenados.forEach(grupo => {
       const valores = [];
-      const conteo = { 0:0, 5:0, 10:0, 20:0, 25:0, 30:0, 50:0 };
-      
+      const conteo = { 0: 0, 5: 0, 10: 0, 20: 0, 25: 0, 30: 0, 50: 0 };
+
       ranking.forEach(user => {
         const val = user[`bonus_${grupo}`];
         if (val !== undefined && val !== null) {
@@ -945,7 +945,7 @@ export default function Dashboard() {
 
       if (valores.length > 0) {
         const max = Math.max(...valores);
-        const avg = (valores.reduce((a,b) => a+b, 0) / valores.length).toFixed(1);
+        const avg = (valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(1);
         stats[grupo] = { max, avg, conteo };
       }
     });
@@ -1186,42 +1186,6 @@ export default function Dashboard() {
               </>
             )}
 
-            {estadisticasPartidos.length > 0 && (
-              <div style={{ marginTop: '40px' }}>
-                <h3 style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--primary-color)' }}>Estadísticas por Partido</h3>
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', fontSize: '14px' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '2px solid var(--card-border)' }}>
-                        <th style={{ padding: '10px', textAlign: 'left' }}>Partido</th>
-                        <th style={{ padding: '10px' }}>Resultado</th>
-                        <th style={{ padding: '10px' }}>Predicciones</th>
-                        <th style={{ padding: '10px' }}>Promedio Pts</th>
-                        <th style={{ padding: '10px' }}>Puntaje Máx</th>
-                        <th style={{ padding: '10px' }}>Acertaron Exacto</th>
-                        <th style={{ padding: '10px' }}>Acertaron Tendencia</th>
-                        <th style={{ padding: '10px' }}>Cero Puntos</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {estadisticasPartidos.map(est => (
-                        <tr key={est.partido_id} style={{ borderBottom: '1px solid var(--card-border)' }}>
-                          <td style={{ padding: '10px', textAlign: 'left', fontWeight: 'bold' }}>{est.equipo_local} vs {est.equipo_visitante}</td>
-                          <td style={{ padding: '10px', color: 'var(--primary-color)' }}>{est.resultado_real.goles_local} - {est.resultado_real.goles_visitante}</td>
-                          <td style={{ padding: '10px' }}>{est.totalPreds}</td>
-                          <td style={{ padding: '10px', fontWeight: 'bold' }}>{est.promedioPuntos}</td>
-                          <td style={{ padding: '10px', color: 'var(--success-color)' }}>{est.maxPuntos}</td>
-                          <td style={{ padding: '10px' }}>{est.aciertosExactos}</td>
-                          <td style={{ padding: '10px' }}>{est.aciertosTendencia}</td>
-                          <td style={{ padding: '10px', color: 'var(--danger-color)' }}>{est.ceros}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
             {gruposConBonus.length > 0 && (
               <div style={{ marginTop: '40px' }}>
                 <h3 style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--primary-color)' }}>Estadísticas de Bonus por Grupo</h3>
@@ -1254,6 +1218,42 @@ export default function Dashboard() {
                           </tr>
                         );
                       })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {estadisticasPartidos.length > 0 && (
+              <div style={{ marginTop: '40px' }}>
+                <h3 style={{ textAlign: 'center', marginBottom: '20px', color: 'var(--primary-color)' }}>Estadísticas por Partido</h3>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', fontSize: '14px' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid var(--card-border)' }}>
+                        <th style={{ padding: '10px', textAlign: 'left' }}>Partido</th>
+                        <th style={{ padding: '10px' }}>Resultado</th>
+                        <th style={{ padding: '10px' }}>Predicciones</th>
+                        <th style={{ padding: '10px' }}>Promedio Pts</th>
+                        <th style={{ padding: '10px' }}>Puntaje Máx</th>
+                        <th style={{ padding: '10px' }}>Acertaron Exacto</th>
+                        <th style={{ padding: '10px' }}>Acertaron Tendencia</th>
+                        <th style={{ padding: '10px' }}>Cero Puntos</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {estadisticasPartidos.map(est => (
+                        <tr key={est.partido_id} style={{ borderBottom: '1px solid var(--card-border)' }}>
+                          <td style={{ padding: '10px', textAlign: 'left', fontWeight: 'bold' }}>{est.equipo_local} vs {est.equipo_visitante}</td>
+                          <td style={{ padding: '10px', color: 'var(--primary-color)' }}>{est.resultado_real.goles_local} - {est.resultado_real.goles_visitante}</td>
+                          <td style={{ padding: '10px' }}>{est.totalPreds}</td>
+                          <td style={{ padding: '10px', fontWeight: 'bold' }}>{est.promedioPuntos}</td>
+                          <td style={{ padding: '10px', color: 'var(--success-color)' }}>{est.maxPuntos}</td>
+                          <td style={{ padding: '10px' }}>{est.aciertosExactos}</td>
+                          <td style={{ padding: '10px' }}>{est.aciertosTendencia}</td>
+                          <td style={{ padding: '10px', color: 'var(--danger-color)' }}>{est.ceros}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
