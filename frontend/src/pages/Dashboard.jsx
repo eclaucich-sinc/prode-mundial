@@ -593,7 +593,7 @@ const FaseCard = ({ fase, dataFase, misPredicciones, token, onPredictionSaved, u
           <span style={{ background: 'rgba(34, 197, 94, 0.2)', color: 'var(--success-color)', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
             Puntos sumados: {dataFase.puntosAcumulados} {maxPosibleEliminatoria > 0 && `/ Máx: ${maxPosibleEliminatoria}`}
           </span>
-          {bonusGrupo > 0 && (
+          {bonusGrupo >= 0 && (
             <span style={{ background: 'rgba(234, 179, 8, 0.2)', color: 'var(--warning-color)', padding: '5px 10px', borderRadius: '15px', fontWeight: 'bold', fontSize: '14px' }}>
               + bonus ganado: {bonusGrupo}
             </span>
@@ -636,10 +636,10 @@ const ModalRenombrar = ({ alCerrar, alGuardar, errorMsg, clientName, loading }) 
             RECORDATORIO: El usuario DEBE ser tu nombre y apellido. Las cuentas que no respeten esto serán eliminadas de la promo.
           </p>
         )}
-        <input 
-          type="text" 
-          value={nuevoNombre} 
-          onChange={(e) => setNuevoNombre(e.target.value)} 
+        <input
+          type="text"
+          value={nuevoNombre}
+          onChange={(e) => setNuevoNombre(e.target.value)}
           placeholder={clientName === 'Q21' ? "Nombre y apellido" : "Nuevo nombre"}
           style={{ width: '100%', padding: '12px', fontSize: '16px', borderRadius: '8px', margin: '15px 0' }}
         />
@@ -930,12 +930,12 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       {editandoNombre && (
-        <ModalRenombrar 
-          alCerrar={() => setEditandoNombre(false)} 
-          alGuardar={guardarNuevoNombre} 
-          errorMsg={errorRenombrar} 
-          clientName={clientName} 
-          loading={cargandoRenombre} 
+        <ModalRenombrar
+          alCerrar={() => setEditandoNombre(false)}
+          alGuardar={guardarNuevoNombre}
+          errorMsg={errorRenombrar}
+          clientName={clientName}
+          loading={cargandoRenombre}
         />
       )}
 
@@ -1066,7 +1066,7 @@ export default function Dashboard() {
         {tabActiva === 'eliminatoria' && (
           <div>
             <div style={{ padding: '15px', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderLeft: '4px solid #3b82f6', borderRadius: '4px', marginBottom: '20px', fontSize: '14px' }}>
-              <strong>ℹ️ Sistema de Puntos Eliminatorios:</strong> La base por partido es de <strong>5 puntos</strong> (exacto) y <strong>3 puntos</strong> (tendencia). 
+              <strong>ℹ️ Sistema de Puntos Eliminatorios:</strong> La base por partido es de <strong>5 puntos</strong> (exacto) y <strong>3 puntos</strong> (tendencia).
               A medida que avanzás de ronda, los puntos se duplican (Octavos x2, Cuartos x4, etc.) para que el total en juego se mantenga constante. ¡En esta fase no hay bonus!
             </div>
             {Object.keys(fixtureAgrupado).filter(f => !f.startsWith('Grupo')).length === 0 ? (
@@ -1077,7 +1077,7 @@ export default function Dashboard() {
                 const dataFase = fixtureAgrupado[fase];
                 // Ordenar por número de partido para mantener la estructura del cuadro
                 dataFase.partidos.sort((a, b) => (a.numero_partido || 0) - (b.numero_partido || 0));
-                
+
                 return (
                   <FaseCard key={fase} fase={fase} dataFase={dataFase} misPredicciones={misPredicciones} token={token} onPredictionSaved={handlePredictionSaved} userData={userData} />
                 );
